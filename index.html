@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rede Madrugada</title>
+    <meta name="color-scheme" content="light" />
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico/css/pico.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+
+    <style>
+        body {
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+            margin: 0;
+
+
+        }
+
+        #controls-panel {
+            background-color: #ffffff;
+            border-radius: 8px;
+            position: absolute;
+            top: 5%;
+            left: 25%;
+            width: 50%;
+            height: auto;
+            z-index: 1000;
+
+            padding: 8px;
+            text-align: center;
+        }
+
+        #controls-panel h1 {
+            color: #363636 !important;
+        }
+
+        #map {
+            height: 100%;
+            width: 100%;
+        }
+
+        .leaflet-popup-content p {
+            margin: 0;
+            color: #363636;
+        }
+        .leaflet-touch .leaflet-bar a {
+            padding: 0;
+            border-radius: 8px!important;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="controls-panel">
+        <h1>Rede Madrugada</h1>
+
+        <label>
+            <span id="hour-text"></span>:00 horas
+            <input id="hour-slider" type="range" />
+        </label>
+    </div>
+
+    <div id="map"></div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+    <script src="./js/leaflet.ajax.min.js"></script>
+
+    <script>
+        const BASE_URL = "https://lpp.gmatos.pt/rede-madrugada/geojson";
+        const DATABASE = {
+            0: ['Carris'],
+            1: ['Carris'],
+            2: ['Carris'],
+            3: ['Carris'],
+            4: ['Carris'],
+            6: ['Carris'],
+            7: ['Carris'],
+            8: ['Carris']
+        }
+
+        let geojsonLayer = null;
+
+        const getShapesLayer = (operator, hour) => {
+            return new L.GeoJSON.AJAX(`${BASE_URL}/${operator}_${String(hour).padStart(2, '0')}00_shapes.geojson`, {
+                style: function (feature) {
+                    console.log("feature", feature);
+
+                    let properties = feature.properties;
+
+                    let weight = properties.buses > 5 ? 5 :
+                        properties.buses > 4 ? 3 :
+                            properties.buses > 2 ? 1.5 :
+                                .75;
+
+                    return { color: "#00ffac", weight: weight };
+                },
+                onEachFeature: function (feature, layer) {
+                    let properties = feature.properties;
+                    layer.bindPopup(`
+                        <p><b>Linha ${properties.route_short_name}</b> ${properties.route_long_name}</b>
+                        <p>Autocarros em circulação: <b>${Math.ceil(properties.buses)}</b></p>
+                        <p>Intervalo médio entre circulações: <b>${Math.ceil(properties.mean_headways / 60)} minutos</b></p>
+                    `);
+                }
+            });
+        }
+
+        const formChange = (map, hour) => {
+            console.log("form change", map, hour)
+            hour_text = document.getElementById("hour-text");
+
+            hour_text.innerHTML = String(hour).padStart(2, '0');
+
+            if (map) {
+                if (geojsonLayer) geojsonLayer.remove();
+                geojsonLayer = getShapesLayer("Carris", hour);
+                geojsonLayer.addTo(map);
+            }
+
+        }
+
+        window.onload = function () {
+            // Initialize map
+            var map = L.map('map').setView([38.719604, -9.139209], 13);
+
+            L.tileLayer(
+                // 'https://tile.openstreetmap.org/{z}/{x}/{y}.png', // Default Open Street Maps
+                // 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', // ArcGis Light
+                // 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', // Styles at https://github.com/CartoDB/basemap-styles
+                'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',
+                {
+                    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                }
+            ).addTo(map);
+
+            // DOM elements
+            hour_slider = document.getElementById("hour-slider");
+
+            // Addapt form to database
+            const hours = Object.keys(DATABASE).map(v => parseInt(v));
+            hour_slider.max = Math.max(...hours);
+            hour_slider.min = Math.min(...hours);
+            hour_slider.value = Math.min(...hours);
+            
+            // State
+            let HOUR = Math.min(...hours);
+
+            // Listeners 
+            hour_slider.oninput = (e) => {
+                formChange(undefined, e.target.value); // When user is just sliding, don't update map
+            }
+            hour_slider.onchange = (e) => {
+                formChange(map, e.target.value);
+            }
+
+            // Initialize form 
+            formChange(map, HOUR);
+        }
+
+
+    </script>
+</body>
+
+</html>
