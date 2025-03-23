@@ -59,12 +59,12 @@
 <body>
 
     <div id="controls-panel">
-        <h1>Rede Madrugada</h1>
-
         <label>
             <span id="hour-text"></span>:00 horas
             <input id="hour-slider" type="range" />
         </label>
+        <fieldset id="operator-fieldset"></fieldset>
+        <fieldset id="dates-fieldset"></fieldset>
     </div>
 
     <div id="map"></div>
@@ -76,56 +76,72 @@
 
     <script>
         const BASE_URL = "https://lpp.gmatos.pt/rede-madrugada/geojson";
-        const DATABASE = {
-            0: ['Carris'],
-            1: ['Carris'],
-            2: ['Carris'],
-            3: ['Carris'],
-            4: ['Carris'],
-            6: ['Carris'],
-            7: ['Carris'],
-            8: ['Carris']
+        const DB_OPERATORS = {
+            Carris: { color: '#003f8f', name: 'Carris Municipal' }, 
+            CarrisMetropolitana: { color: '#ffdd01', name: 'Carris Metropolitana' },
+            MetroLisboa: { color: "#EF5A34", name: "Metro Lisboa" }, 
+            MobiCascais: { color: "#31bcad", name: "MobiCascais" },
+            MTS: { color: "#218FCE", name: "Metro Sul" },
+            TCB: { color: "#95CB4E", name: "TCBarreiro" },
+            // CP: { color: "", name: "CP" },
+            // Fertagus: { color: "", name: "Fertagus" },
+            // TTSL: { color: "", name: "TTSL" },
+        };
+        const DB_HOURS = [0, 1, 2, 3, 4, 5, 6, 7, 8];
+        const DB_DATES =  {
+            20250326: "Dias úteis (Maio)",
+            20250329: "Sábados (Maio)",
+            20250401: "Dias úteis (Abril)",
         }
 
-        let geojsonLayer = null;
+        let geojsonLayer = {}; // Each operator will have one
 
-        const getShapesLayer = (operator, hour) => {
-            return new L.GeoJSON.AJAX(`${BASE_URL}/${operator}_${String(hour).padStart(2, '0')}00_shapes.geojson`, {
+        const getShapesLayer = (operator, date, hour) => {
+            return new L.GeoJSON.AJAX(`${BASE_URL}/${date}/${operator}_${String(hour).padStart(2, '0')}00_shapes.geojson`, {
                 style: function (feature) {
                     console.log("feature", feature);
 
                     let properties = feature.properties;
 
-                    let weight = properties.buses > 5 ? 5 :
-                        properties.buses > 4 ? 3 :
-                            properties.buses > 2 ? 1.5 :
+                    let weight = properties.services_2 > 5 ? 5 :
+                        properties.services_2 > 4 ? 3 :
+                            properties.services_2 > 2 ? 1.5 :
                                 .75;
 
-                    return { color: "#00ffac", weight: weight };
+                    return { color: DB_OPERATORS[operator]['color'], weight: weight };
                 },
                 onEachFeature: function (feature, layer) {
                     let properties = feature.properties;
                     layer.bindPopup(`
                         <p><b>Linha ${properties.route_short_name}</b> ${properties.route_long_name}</b>
-                        <p>Autocarros em circulação: <b>${Math.ceil(properties.buses)}</b></p>
+                        <p>Nr circulações: <b>${Math.ceil(properties.services_2)}</b></p>
                         <p>Intervalo médio entre circulações: <b>${Math.ceil(properties.mean_headways / 60)} minutos</b></p>
                     `);
                 }
             });
         }
 
-        const formChange = (map, hour) => {
-            console.log("form change", map, hour)
-            hour_text = document.getElementById("hour-text");
+        const formChange = (map, date, hour, operators) => {
+            console.log("form change", date, hour, operators);
 
+            hour_text = document.getElementById("hour-text");
             hour_text.innerHTML = String(hour).padStart(2, '0');
 
-            if (map) {
-                if (geojsonLayer) geojsonLayer.remove();
-                geojsonLayer = getShapesLayer("Carris", hour);
-                geojsonLayer.addTo(map);
-            }
+            if (map && date && hour!==undefined && operators) {
+                if (Array.isArray(operators)) {
+                    // Only remove other operators when a new list is provided
+                    // This allows to add a new operator individually, without removing the others
+                    Object.values(geojsonLayer).forEach(layer => layer.remove());
+                } else {
+                    // Otherwise, just convert the single operator into a list for the next step to work :)
+                    operators = [operators];
+                }
 
+                operators.forEach(op => {
+                    geojsonLayer[op] = getShapesLayer(op, date, hour);
+                    geojsonLayer[op].addTo(map);
+                })
+            }
         }
 
         window.onload = function () {
@@ -143,27 +159,77 @@
             ).addTo(map);
 
             // DOM elements
-            hour_slider = document.getElementById("hour-slider");
+            const hour_slider = document.getElementById("hour-slider");
+            const operator_fieldset = document.getElementById("operator-fieldset");
+            const dates_fieldset = document.getElementById("dates-fieldset");
 
             // Addapt form to database
-            const hours = Object.keys(DATABASE).map(v => parseInt(v));
-            hour_slider.max = Math.max(...hours);
-            hour_slider.min = Math.min(...hours);
-            hour_slider.value = Math.min(...hours);
+            hour_slider.max = Math.max(...DB_HOURS);
+            hour_slider.min = Math.min(...DB_HOURS);
+            hour_slider.value = Math.min(...DB_HOURS);
+
+            let operators_form_html = "";
+            Object.keys(DB_OPERATORS).map(operator => {
+                let properties = DB_OPERATORS[operator];
+                operators_form_html += `
+                    <input type="checkbox" value="${operator}" name="operator-checkbox" checked />
+                    <label htmlFor="${operator}">${properties.name}</label>
+                `
+            })
+            operator_fieldset.innerHTML = operators_form_html;
+            const operator_checkbox = document.getElementsByName("operator-checkbox");
+
+            let dates_form_html = "";
+            Object.keys(DB_DATES).map((day, i) => {
+                let label = DB_DATES[day];
+                dates_form_html += `
+                    <input type="radio" value="${day}" name="date-checkbox" ${i===0 ? 'checked' : ''} />
+                    <label htmlFor="${day}">${label}</label>
+                `
+            })
+            dates_fieldset.innerHTML = dates_form_html;
+            const date_checkbox = document.getElementsByName("date-checkbox");
             
             // State
-            let HOUR = Math.min(...hours);
+            let HOUR = Math.min(...DB_HOURS);
+            let OPERATORS = Object.keys(DB_OPERATORS);
+            let DATE = Object.keys(DB_DATES)[0];
 
             // Listeners 
             hour_slider.oninput = (e) => {
-                formChange(undefined, e.target.value); // When user is just sliding, don't update map
+                formChange(undefined, undefined, e.target.value, undefined); // When user is just sliding, don't update map
             }
             hour_slider.onchange = (e) => {
-                formChange(map, e.target.value);
+                HOUR = e.target.value;
+                formChange(map, DATE, HOUR, OPERATORS);
             }
 
+            operator_checkbox.forEach(checkbox => {
+                checkbox.onchange = (e) => {
+                    let operator = e.target.value;
+                    if (e.target.checked) { // true, add to operators
+                        OPERATORS = [...new Set([...OPERATORS, operator])];
+                        formChange(map, DATE, HOUR, operator); 
+                    } else { // Remove
+                        OPERATORS = [...new Set(OPERATORS.filter(v => v !== operator))];
+                        if (geojsonLayer[operator]) geojsonLayer[operator].remove();
+                    }
+                }
+            })
+
+            date_checkbox.forEach(checkbox => {
+                checkbox.onchange = (e) => {
+                    console.log("date_checkbox", e.target.value)
+                    if (e.target.checked) { // true, add to operators
+                        DATE = e.target.value;
+                        formChange(map, DATE, HOUR, OPERATORS);
+                    }
+
+                }
+            })
+
             // Initialize form 
-            formChange(map, HOUR);
+            formChange(map, DATE, HOUR, OPERATORS);
         }
 
 
