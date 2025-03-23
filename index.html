@@ -22,18 +22,30 @@
 
         }
 
+        fieldset {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+            gap: 16px;
+            font-size: .9rem;
+        }
+
         #controls-panel {
             background-color: #ffffff;
             border-radius: 8px;
             position: absolute;
             top: 5%;
-            left: 25%;
-            width: 50%;
+            left: 2.5%;
+            width: 25%;
             height: auto;
             z-index: 1000;
 
-            padding: 8px;
+            padding: 24px 8px;
             text-align: center;
+
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
         }
 
         #controls-panel h1 {
@@ -49,9 +61,15 @@
             margin: 0;
             color: #363636;
         }
+
         .leaflet-touch .leaflet-bar a {
             padding: 0;
-            border-radius: 8px!important;
+            border-radius: 8px !important;
+        }
+
+        button {
+            padding: 8px !important;
+            font-size: 1rem;
         }
     </style>
 </head>
@@ -59,12 +77,22 @@
 <body>
 
     <div id="controls-panel">
-        <label>
-            <span id="hour-text"></span>:00 horas
+        <div class="container-fluid" style="display: flex; align-items: center;">
+            <img src="./static/lpp.png" width="25%" style="margin-right: 8px;" />
+            <h3 style="margin: 0; color: #363636;">| Rede madrugada</h3>
+        </div>
+        <label class="container-fluid" style="margin-top: 16px;">
+            <h6 style="margin: 0;"><span id="hour-text"></span>:00 horas</h6>
             <input id="hour-slider" type="range" />
         </label>
-        <fieldset id="operator-fieldset"></fieldset>
-        <fieldset id="dates-fieldset"></fieldset>
+        <div class="container-fluid">
+            <h6 style="text-align: left;">Operadores</h6>
+            <fieldset id="operator-fieldset"></fieldset>
+        </div>
+        <div class="container-fluid">
+            <h6 style="text-align: left;">Datas</h6>
+            <fieldset id="dates-fieldset"></fieldset>
+        </div>
     </div>
 
     <div id="map"></div>
@@ -77,9 +105,9 @@
     <script>
         const BASE_URL = "https://lpp.gmatos.pt/rede-madrugada/geojson";
         const DB_OPERATORS = {
-            Carris: { color: '#003f8f', name: 'Carris Municipal' }, 
+            Carris: { color: '#003f8f', name: 'Carris Municipal' },
             CarrisMetropolitana: { color: '#ffdd01', name: 'Carris Metropolitana' },
-            MetroLisboa: { color: "#EF5A34", name: "Metro Lisboa" }, 
+            MetroLisboa: { color: "#EF5A34", name: "Metro Lisboa" },
             MobiCascais: { color: "#31bcad", name: "MobiCascais" },
             MTS: { color: "#218FCE", name: "Metro Sul" },
             TCB: { color: "#95CB4E", name: "TCBarreiro" },
@@ -88,10 +116,10 @@
             // TTSL: { color: "", name: "TTSL" },
         };
         const DB_HOURS = [0, 1, 2, 3, 4, 5, 6, 7, 8];
-        const DB_DATES =  {
+        const DB_DATES = {
             20250326: "Dias úteis (Maio)",
-            20250329: "Sábados (Maio)",
-            20250401: "Dias úteis (Abril)",
+            // 20250329: "Sábados (Maio)",
+            // 20250401: "Dias úteis (Abril)",
         }
 
         let geojsonLayer = {}; // Each operator will have one
@@ -127,7 +155,7 @@
             hour_text = document.getElementById("hour-text");
             hour_text.innerHTML = String(hour).padStart(2, '0');
 
-            if (map && date && hour!==undefined && operators) {
+            if (map && date && hour !== undefined && operators) {
                 if (Array.isArray(operators)) {
                     // Only remove other operators when a new list is provided
                     // This allows to add a new operator individually, without removing the others
@@ -146,7 +174,7 @@
 
         window.onload = function () {
             // Initialize map
-            var map = L.map('map').setView([38.719604, -9.139209], 13);
+            var map = L.map('map', {zoomControl: false}).setView([38.719604, -9.139209], 13);
 
             L.tileLayer(
                 // 'https://tile.openstreetmap.org/{z}/{x}/{y}.png', // Default Open Street Maps
@@ -154,9 +182,13 @@
                 // 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', // Styles at https://github.com/CartoDB/basemap-styles
                 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',
                 {
-                    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                    // attribution: '&copy; '
                 }
             ).addTo(map);
+
+            L.control.zoom({
+                position: 'bottomright'
+            }).addTo(map);
 
             // DOM elements
             const hour_slider = document.getElementById("hour-slider");
@@ -172,8 +204,7 @@
             Object.keys(DB_OPERATORS).map(operator => {
                 let properties = DB_OPERATORS[operator];
                 operators_form_html += `
-                    <input type="checkbox" value="${operator}" name="operator-checkbox" checked />
-                    <label htmlFor="${operator}">${properties.name}</label>
+                    <label htmlFor="${operator}"><input type="checkbox" value="${operator}" name="operator-checkbox" checked />${properties.name}</label>
                 `
             })
             operator_fieldset.innerHTML = operators_form_html;
@@ -183,13 +214,12 @@
             Object.keys(DB_DATES).map((day, i) => {
                 let label = DB_DATES[day];
                 dates_form_html += `
-                    <input type="radio" value="${day}" name="date-checkbox" ${i===0 ? 'checked' : ''} />
-                    <label htmlFor="${day}">${label}</label>
+                    <label htmlFor="${day}"><input type="radio" value="${day}" name="date-checkbox" ${i === 0 ? 'checked' : ''} />${label}</label>
                 `
             })
             dates_fieldset.innerHTML = dates_form_html;
             const date_checkbox = document.getElementsByName("date-checkbox");
-            
+
             // State
             let HOUR = Math.min(...DB_HOURS);
             let OPERATORS = Object.keys(DB_OPERATORS);
@@ -209,7 +239,7 @@
                     let operator = e.target.value;
                     if (e.target.checked) { // true, add to operators
                         OPERATORS = [...new Set([...OPERATORS, operator])];
-                        formChange(map, DATE, HOUR, operator); 
+                        formChange(map, DATE, HOUR, operator);
                     } else { // Remove
                         OPERATORS = [...new Set(OPERATORS.filter(v => v !== operator))];
                         if (geojsonLayer[operator]) geojsonLayer[operator].remove();
