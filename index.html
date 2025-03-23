@@ -29,6 +29,8 @@
             gap: 16px;
             font-size: .9rem;
         }
+        dl { color: #363636; }
+        dl dd {text-align: right; }
 
         #controls-panel {
             background-color: #ffffff;
@@ -83,8 +85,8 @@
             visibility: visible;
             height: auto;
         }
-
         div.hidden {
+            display: none;
             opacity: 0;
             visibility: hidden;
             height: 0;
@@ -168,9 +170,15 @@
                 onEachFeature: function (feature, layer) {
                     let properties = feature.properties;
                     layer.bindPopup(`
-                        <p><b>Linha ${properties.route_short_name}</b> ${properties.route_long_name}</b>
-                        <p>Nr circulações: <b>${Math.ceil(properties.services_2)}</b></p>
-                        <p>Intervalo médio entre circulações: <b>${Math.ceil(properties.mean_headways / 60)} minutos</b></p>
+                        <h6>${DB_OPERATORS[operator]['name']}</h6>
+                        <dl>
+                            <dt>Linha<dt>
+                            <dd><b>${properties.route_short_name}</b>, ${properties.route_long_name}<dd>
+                            <dt>Nr circulações<dt>
+                            <dd><b>${Math.ceil(properties.services_2)}</b></dd>
+                            <dt>Intervalo médio<dt>
+                            <dd><b>${Math.ceil(properties.mean_headways / 60)} minutos</b></dd>
+                        </dl>
                     `);
                 }
             });
