@@ -19,7 +19,6 @@
             overflow: hidden;
             margin: 0;
 
-
         }
 
         fieldset {
@@ -29,8 +28,14 @@
             gap: 16px;
             font-size: .9rem;
         }
-        dl { color: #363636; }
-        dl dd {text-align: right; }
+
+        dl {
+            color: #363636;
+        }
+
+        dl dd {
+            text-align: right;
+        }
 
         #controls-panel {
             background-color: #ffffff;
@@ -49,6 +54,23 @@
             display: flex;
             flex-direction: column;
             align-items: flex-start;
+
+            z-index: 10000;
+        }
+
+        @media only screen and (max-width: 992px) {
+            #controls-panel {
+                width: 45%;
+                left: 5%;
+            }
+        }
+
+        @media only screen and (max-width: 768px) {
+            #controls-panel {
+                width: 95%;
+                left: 2.5%;
+                max-height: 90vh;
+            }
         }
 
         #controls-panel h1 {
@@ -85,6 +107,7 @@
             visibility: visible;
             height: auto;
         }
+
         div.hidden {
             display: none;
             opacity: 0;
@@ -99,7 +122,7 @@
     <div id="controls-panel" class="overflow-auto">
         <div class="container-fluid" style="display: flex; align-items: center;">
             <img src="./static/lpp.png" width="25%" style="margin-right: 8px;" />
-            <h3 style="margin: 0; color: #363636;">| Rede madrugada</h3>
+            <h3 style="margin: 0; color: #363636; text-align: left;">| Rede madrugada</h3>
         </div>
         <label class="container-fluid" style="margin-top: 16px;">
             <h6 style="margin: 0;"><span id="hour-text"></span>:00 horas</h6>
@@ -113,11 +136,13 @@
             <h6 style="text-align: left;">Datas</h6>
             <fieldset id="dates-fieldset"></fieldset>
         </div>
+        <div class="container-fluid details" style="margin-bottom: 8px;">
+            <button class="secondary outline" id="toggle-color" style="width: 100%"></button>
+        </div>
         <div class="container-fluid">
-            <div role="group">
-                <button class="secondary outline" id="toggle-color"></button>
-                <button class="secondary outline" id="toggle-detail"></button>
-            </div>
+            <fieldset>
+                <button class="secondary outline" id="toggle-detail" style="width: 100%"></button>
+            </fieldset>
         </div>
     </div>
 
@@ -215,7 +240,7 @@
                 else e.classList.add("hidden");
             })
 
-            btn_detail.innerHTML = detailed ? "🔹Simplificar formulário" : "📑 Detalhar formulário";
+            btn_detail.innerHTML = detailed ? "🔹Ver mapa" : "📑 Editar parâmetros";
             localStorage.setItem("detailed-mode", detailed);
         }
 
