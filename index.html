@@ -37,6 +37,7 @@
             top: 5%;
             left: 2.5%;
             width: 25%;
+            max-height: 75vh;
             height: auto;
             z-index: 1000;
 
@@ -69,14 +70,31 @@
 
         button {
             padding: 8px !important;
-            font-size: 1rem;
+            font-size: .9rem;
+        }
+
+        div {
+            -webkit-transition: all 0.2s ease-in-out 0s;
+            -moz-transition: all 0.2s ease-in-out 0s;
+            -ms-transition: all 0.2s ease-in-out 0s;
+            transition: all 0.2s ease-in-out 0s;
+
+            opacity: 1;
+            visibility: visible;
+            height: auto;
+        }
+
+        div.hidden {
+            opacity: 0;
+            visibility: hidden;
+            height: 0;
         }
     </style>
 </head>
 
 <body>
 
-    <div id="controls-panel">
+    <div id="controls-panel" class="overflow-auto">
         <div class="container-fluid" style="display: flex; align-items: center;">
             <img src="./static/lpp.png" width="25%" style="margin-right: 8px;" />
             <h3 style="margin: 0; color: #363636;">| Rede madrugada</h3>
@@ -85,13 +103,19 @@
             <h6 style="margin: 0;"><span id="hour-text"></span>:00 horas</h6>
             <input id="hour-slider" type="range" />
         </label>
-        <div class="container-fluid">
+        <div class="container-fluid details">
             <h6 style="text-align: left;">Operadores</h6>
             <fieldset id="operator-fieldset"></fieldset>
         </div>
-        <div class="container-fluid">
+        <div class="container-fluid details">
             <h6 style="text-align: left;">Datas</h6>
             <fieldset id="dates-fieldset"></fieldset>
+        </div>
+        <div class="container-fluid">
+            <div role="group">
+                <button class="secondary outline" id="toggle-color"></button>
+                <button class="secondary outline" id="toggle-detail"></button>
+            </div>
         </div>
     </div>
 
@@ -121,6 +145,9 @@
             // 20250329: "Sábados (Maio)",
             // 20250401: "Dias úteis (Abril)",
         }
+
+        const MAP_DARK = 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png';
+        const MAP_LIGHT = 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png';
 
         let geojsonLayer = {}; // Each operator will have one
 
@@ -172,28 +199,49 @@
             }
         }
 
+        const toggleDetails = (btn_detail, detailed) => {
+            let elements = document.getElementsByClassName("details");
+
+            Array.from(elements).forEach(e => {
+                if (detailed) e.classList.remove("hidden");
+                else e.classList.add("hidden");
+            })
+
+            btn_detail.innerHTML = detailed ? "🔹Simplificar formulário" : "📑 Detalhar formulário";
+            localStorage.setItem("detailed-mode", detailed);
+        }
+
+        const toggleColor = (map, btn_color, mode) => {
+            L.tileLayer(mode === "dark" ? MAP_DARK : MAP_LIGHT).addTo(map);
+            btn_color.innerHTML = mode === "dark" ? "☀️ Modo claro" : "🌑 Modo escuro";
+            localStorage.setItem("color-mode", mode);
+        }
+
         window.onload = function () {
-            // Initialize map
-            var map = L.map('map', {zoomControl: false}).setView([38.719604, -9.139209], 13);
 
-            L.tileLayer(
-                // 'https://tile.openstreetmap.org/{z}/{x}/{y}.png', // Default Open Street Maps
-                // 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', // ArcGis Light
-                // 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', // Styles at https://github.com/CartoDB/basemap-styles
-                'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',
-                {
-                    // attribution: '&copy; '
-                }
-            ).addTo(map);
-
-            L.control.zoom({
-                position: 'bottomright'
-            }).addTo(map);
+            // State
+            let HOUR = Math.min(...DB_HOURS);
+            let OPERATORS = Object.keys(DB_OPERATORS);
+            let DATE = Object.keys(DB_DATES)[0];
+            let COLOR_MODE = localStorage.getItem("color-mode") ? localStorage.getItem("color-mode") : "dark";
+            let DETAILED_MODE = localStorage.getItem("detailed-mode") ? localStorage.getItem("detailed-mode") === "true" : true;
 
             // DOM elements
             const hour_slider = document.getElementById("hour-slider");
             const operator_fieldset = document.getElementById("operator-fieldset");
             const dates_fieldset = document.getElementById("dates-fieldset");
+            const btn_color = document.getElementById("toggle-color");
+            const btn_detail = document.getElementById("toggle-detail");
+
+            // Initialize map
+            var map = L.map('map', { zoomControl: false }).setView([38.719604, -9.139209], 13);
+
+            toggleColor(map, btn_color, COLOR_MODE);
+
+            L.control.zoom({
+                position: 'bottomright'
+            }).addTo(map);
+
 
             // Addapt form to database
             hour_slider.max = Math.max(...DB_HOURS);
@@ -219,11 +267,6 @@
             })
             dates_fieldset.innerHTML = dates_form_html;
             const date_checkbox = document.getElementsByName("date-checkbox");
-
-            // State
-            let HOUR = Math.min(...DB_HOURS);
-            let OPERATORS = Object.keys(DB_OPERATORS);
-            let DATE = Object.keys(DB_DATES)[0];
 
             // Listeners 
             hour_slider.oninput = (e) => {
@@ -258,8 +301,20 @@
                 }
             })
 
+            btn_color.onclick = () => {
+                COLOR_MODE = COLOR_MODE === "dark" ? "light" : "dark";
+                toggleColor(map, btn_color, COLOR_MODE);
+            }
+
+            btn_detail.onclick = () => {
+                DETAILED_MODE = !DETAILED_MODE;
+                localStorage.setItem("detailed-mode", DETAILED_MODE);
+                toggleDetails(btn_detail, DETAILED_MODE);
+            }
+
             // Initialize form 
             formChange(map, DATE, HOUR, OPERATORS);
+            toggleDetails(btn_detail, DETAILED_MODE);
         }
 
 
