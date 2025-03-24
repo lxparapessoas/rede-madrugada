@@ -1,0 +1,101 @@
+body {
+    height: 100vh;
+    width: 100vw;
+    overflow: hidden;
+    margin: 0;
+
+}
+
+fieldset {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 16px;
+    font-size: .9rem;
+}
+
+dl {
+    color: #363636;
+}
+
+dl dd {
+    text-align: right;
+}
+
+#controls-panel {
+    background-color: #ffffff;
+    border-radius: 8px;
+    position: absolute;
+    top: 5%;
+    left: 2.5%;
+    width: 25%;
+    max-height: 75vh;
+    height: auto;
+    z-index: 1000;
+
+    padding: 24px 8px;
+    text-align: center;
+
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+
+    z-index: 10000;
+}
+
+@media only screen and (max-width: 992px) {
+    #controls-panel {
+        width: 45%;
+        left: 5%;
+    }
+}
+
+@media only screen and (max-width: 768px) {
+    #controls-panel {
+        width: 95%;
+        left: 2.5%;
+        max-height: 90vh;
+    }
+}
+
+#controls-panel h1 {
+    color: #363636 !important;
+}
+
+#map {
+    height: 100%;
+    width: 100%;
+}
+
+.leaflet-popup-content p {
+    margin: 0;
+    color: #363636;
+}
+
+.leaflet-touch .leaflet-bar a {
+    padding: 0;
+    border-radius: 8px !important;
+}
+
+button {
+    padding: 8px !important;
+    font-size: .9rem;
+}
+
+div {
+    -webkit-transition: all 0.2s ease-in-out 0s;
+    -moz-transition: all 0.2s ease-in-out 0s;
+    -ms-transition: all 0.2s ease-in-out 0s;
+    transition: all 0.2s ease-in-out 0s;
+
+    opacity: 1;
+    visibility: visible;
+    height: auto;
+}
+
+div.hidden {
+    display: none;
+    opacity: 0;
+    visibility: hidden;
+    height: 0;
+}
