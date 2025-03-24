@@ -70,10 +70,14 @@ const toggleColor = (map, btn_color, mode) => {
 
 window.onload = function () {
 
+    // Get URL params
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('iframe')===null) document.getElementsByClassName("iframe")[0].classList.remove("iframe");
+
     // State
     let HOUR = Math.min(...DB_HOURS);
     let OPERATORS = Object.keys(DB_OPERATORS);
-    let DATE = Object.keys(DB_DATES)[0];
+    let DATE = urlParams.get('date') && Object.keys(DB_DATES).includes(urlParams.get('date')) ? urlParams.get('date') : Object.keys(DB_DATES)[0];
     let COLOR_MODE = localStorage.getItem("color-mode") ? localStorage.getItem("color-mode") : "dark";
     let DETAILED_MODE = localStorage.getItem("detailed-mode") ? localStorage.getItem("detailed-mode") === "true" : true;
 

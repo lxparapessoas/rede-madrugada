@@ -47,6 +47,10 @@ dl dd {
     #controls-panel {
         width: 45%;
         left: 5%;
+        top: 2.5%;
+    }
+    #controls-panel img {
+        width: 15%;
     }
 }
 
@@ -54,6 +58,7 @@ dl dd {
     #controls-panel {
         width: 95%;
         left: 2.5%;
+        top: 1%;
         max-height: 90vh;
     }
 }
@@ -116,4 +121,9 @@ div.hidden {
 [type="range"]:active::-moz-range-thumb, [type="range"]:focus-within::-moz-range-thumb,
 [type="range"]:active::-webkit-slider-thum, [type="range"]:focus-within::-webkit-slider-thum {
     background-color: #00ffac!important;
+}
+
+/** Iframe **/
+.iframe > #controls-panel > .container-fluid:not(:first-of-type) {
+    display: none;
 }
