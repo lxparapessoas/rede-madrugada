@@ -178,18 +178,13 @@
 
         let geojsonLayer = {}; // Each operator will have one
 
+        let maxFrequency = 0;
         const getShapesLayer = (operator, date, hour) => {
             return new L.GeoJSON.AJAX(`${BASE_URL}/${date}/${operator}_${String(hour).padStart(2, '0')}00_shapes.geojson`, {
                 style: function (feature) {
-                    console.log("feature", feature);
-
                     let properties = feature.properties;
-
-                    let weight = properties.services_2 > 5 ? 5 :
-                        properties.services_2 > 4 ? 3 :
-                            properties.services_2 > 2 ? 1.5 :
-                                .75;
-
+                    if (properties.services_2>maxFrequency) maxFrequency = properties.services_2;
+                    let weight =  properties.services_2===0 ? 0 : (properties.services_2 / 16) * 5; // Max weight of 5
                     return { color: DB_OPERATORS[operator]['color'], weight: weight };
                 },
                 onEachFeature: function (feature, layer) {
