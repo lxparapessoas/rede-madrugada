@@ -99,3 +99,21 @@ div.hidden {
     visibility: hidden;
     height: 0;
 }
+
+/** LPP Colors **/
+[type="checkbox"]:checked,
+[type="checkbox"]:checked:active,
+[type="checkbox"]:checked:focus,
+[type="radio"]:checked,
+[type="radio"]:checked:active,
+[type="radio"]:checked:focus {
+    accent-color: #00ffac;
+    background-color: #00ffac;
+    border-color: #363636;
+    color: #363636;
+}
+
+[type="range"]:active::-moz-range-thumb, [type="range"]:focus-within::-moz-range-thumb,
+[type="range"]:active::-webkit-slider-thum, [type="range"]:focus-within::-webkit-slider-thum {
+    background-color: #00ffac!important;
+}
