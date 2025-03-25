@@ -1,0 +1,11 @@
+{
+"type": "FeatureCollection",
+"name": "TTSL_0100_shapes",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+"features": [
+{ "type": "Feature", "properties": { "shape_id": "5185C4-1", "route_id": "7_0", "route_short_name": "TTSL", "route_long_name": "Barreiro - Terreiro do Paço", "total_departures": null, "median_headways": null, "mean_headways": null, "st_dev_headways": null, "stop_count": null, "services": null }, "geometry": { "type": "LineString", "coordinates": [ [ -9.0784, 38.6518 ], [ -9.0845, 38.6504 ], [ -9.095, 38.655 ], [ -9.1336, 38.707 ] ] } },
+{ "type": "Feature", "properties": { "shape_id": "5185C4-2", "route_id": "7_0", "route_short_name": "TTSL", "route_long_name": "Barreiro - Terreiro do Paço", "total_departures": null, "median_headways": null, "mean_headways": null, "st_dev_headways": null, "stop_count": null, "services": null }, "geometry": { "type": "LineString", "coordinates": [ [ -9.1336, 38.707 ], [ -9.095, 38.655 ], [ -9.0845, 38.6504 ], [ -9.0784, 38.6518 ] ] } },
+{ "type": "Feature", "properties": { "shape_id": "FAB900-1", "route_id": "5_0", "route_short_name": "TTSL", "route_long_name": "Cacilhas - Cais do Sodré", "total_departures": 6, "median_headways": 2700.0, "mean_headways": 2700.0, "st_dev_headways": 1038.65, "stop_count": 4, "services": 1.3333333333333333 }, "geometry": { "type": "LineString", "coordinates": [ [ -9.148, 38.688 ], [ -9.1455, 38.705 ] ] } },
+{ "type": "Feature", "properties": { "shape_id": "FAB900-2", "route_id": "5_0", "route_short_name": "TTSL", "route_long_name": "Cacilhas - Cais do Sodré", "total_departures": 6, "median_headways": 2700.0, "mean_headways": 2700.0, "st_dev_headways": 1038.65, "stop_count": 4, "services": 1.3333333333333333 }, "geometry": { "type": "LineString", "coordinates": [ [ -9.1455, 38.705 ], [ -9.148, 38.688 ] ] } }
+]
+}

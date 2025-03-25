@@ -1,0 +1,8 @@
+{
+"type": "FeatureCollection",
+"name": "CP_0200_shapes",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+"features": [
+{ "type": "Feature", "properties": { "shape_id": "shape-23", "route_id": "25-94_69179-94_69005", "route_short_name": "Linha de Cascais", "route_long_name": "", "total_departures": 10, "median_headways": 3599.0, "mean_headways": 3599.0, "st_dev_headways": 0.0, "stop_count": 10, "services": 1.0002778549597111 }, "geometry": { "type": "LineString", "coordinates": [ [ -9.319014, 38.688613 ], [ -9.311547, 38.68679 ], [ -9.28876, 38.696672 ], [ -9.274441, 38.698888 ], [ -9.252189, 38.69992 ], [ -9.229237, 38.698345 ], [ -9.196767, 38.695876 ], [ -9.172074, 38.70194 ], [ -9.155324, 38.706252 ], [ -9.144381, 38.705907 ] ] } }
+]
+}

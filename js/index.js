@@ -6,8 +6,8 @@ const getShapesLayer = (operator, date, hour) => {
     return new L.GeoJSON.AJAX(`${BASE_URL}/${date}/${operator}_${String(hour).padStart(2, '0')}00_shapes.geojson`, {
         style: function (feature) {
             let properties = feature.properties;
-            if (properties.services_2 > maxFrequency) maxFrequency = properties.services_2;
-            let weight = properties.services_2 === 0 ? 0 : (properties.services_2 / 16) * 5; // Max weight of 5
+            if (properties.services > maxFrequency) maxFrequency = properties.services;
+            let weight = properties.services === 0 ? 0 : (properties.services / 16) * 5; // Max weight of 5
             return { color: DB_OPERATORS[operator]['color'], weight: weight };
         },
         onEachFeature: function (feature, layer) {
@@ -18,7 +18,7 @@ const getShapesLayer = (operator, date, hour) => {
                             <dt>Linha<dt>
                             <dd><b>${properties.route_short_name}</b>, ${properties.route_long_name}<dd>
                             <dt>Nr circulações<dt>
-                            <dd><b>${Math.ceil(properties.services_2)}</b></dd>
+                            <dd><b>${Math.ceil(properties.services)}</b></dd>
                             <dt>Intervalo médio<dt>
                             <dd><b>${Math.ceil(properties.mean_headways / 60)} minutos</b></dd>
                         </dl>
