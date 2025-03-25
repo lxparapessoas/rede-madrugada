@@ -7,9 +7,9 @@ const DB_OPERATORS = {
     MobiCascais: { color: "#31bcad", name: "MobiCascais" },
     MTS: { color: "#218FCE", name: "Metro Sul" },
     TCB: { color: "#95CB4E", name: "TCBarreiro" },
-    // CP: { color: "", name: "CP" },
-    // Fertagus: { color: "", name: "Fertagus" },
-    // TTSL: { color: "", name: "TTSL" },
+    CP: { color: "#74B751", name: "CP" },
+    Fertagus: { color: "#C74F4F", name: "Fertagus" },
+    TTSL: { color: "#EC6724", name: "TTSL" },
 };
 const DB_HOURS = [0, 1, 2, 3, 4, 5, 6, 7, 8];
 const DB_DATES = {
