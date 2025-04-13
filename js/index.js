@@ -84,6 +84,12 @@ const formChange = (map, mapType, date, hourIndex, operators) => {
     hour_text = document.getElementById("hour-text");
     hour_text.innerHTML = String(hour).padStart(2, '0');
 
+    if (mapType && mapType!=="lines") {
+        document.getElementById("operators").classList.add("hidden");
+    } else {
+        document.getElementById("operators").classList.remove("hidden");
+    }
+
     if (map && date && hour !== undefined && operators) {
         if (mapType == "lines") {
             if (Array.isArray(operators)) {
@@ -150,7 +156,7 @@ window.onload = function () {
     let DATE = urlParams.get('date') && Object.keys(DB_DATES).includes(urlParams.get('date')) ? urlParams.get('date') : Object.keys(DB_DATES)[0];
     let COLOR_MODE = localStorage.getItem("color-mode") ? localStorage.getItem("color-mode") : "dark";
     let DETAILED_MODE = localStorage.getItem("detailed-mode") ? localStorage.getItem("detailed-mode") === "true" : true;
-    let MAP_TYPE = "lines";
+    let MAP_TYPE = urlParams.get('map') ? urlParams.get('map') : "lines";
 
     // DOM elements
     const hour_slider = document.getElementById("hour-slider");
@@ -236,7 +242,6 @@ window.onload = function () {
                 MAP_TYPE = e.target.value;
                 formChange(map, MAP_TYPE, DATE, HOUR, OPERATORS);
             }
-
         }
     })
 
