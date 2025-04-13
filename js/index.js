@@ -77,20 +77,22 @@ const getShapesLayerMunicipalities = () => {
 
 
 
-const formChange = (map, mapType, date, hourIndex, operators) => {
+const formChange = (map, mapType, date, hourIndex, operators, detailedMode) => {
     console.log("form change", date, hourIndex, operators);
     let hour = DB_HOURS[hourIndex];
 
     hour_text = document.getElementById("hour-text");
     hour_text.innerHTML = String(hour).padStart(2, '0');
 
-    if (mapType && mapType!=="lines") {
-        document.getElementById("operators").classList.add("hidden");
-    } else {
-        document.getElementById("operators").classList.remove("hidden");
-    }
-
     if (map && date && hour !== undefined && operators) {
+        if (detailedMode && mapType!==undefined && mapType!=="lines") {
+            console.log("MAPTYPE", mapType);
+            document.getElementById("operators").classList.add("hidden");
+        } else if (detailedMode) {
+            console.log("MAPTYPE", mapType);
+            document.getElementById("operators").classList.remove("hidden");
+        }
+
         if (mapType == "lines") {
             if (Array.isArray(operators)) {
                 // Only remove other operators when a new list is provided
@@ -126,11 +128,13 @@ const formChange = (map, mapType, date, hourIndex, operators) => {
     }
 }
 
-const toggleDetails = (btn_detail, detailed) => {
+const toggleDetails = (btn_detail, detailed, mapType) => {
     let elements = document.getElementsByClassName("details");
 
     Array.from(elements).forEach(e => {
-        if (detailed) e.classList.remove("hidden");
+        if (detailed) {
+            if (mapType==="lines" || e.id!=="operators") e.classList.remove("hidden");
+        }
         else e.classList.add("hidden");
     })
 
@@ -157,6 +161,7 @@ window.onload = function () {
     let COLOR_MODE = localStorage.getItem("color-mode") ? localStorage.getItem("color-mode") : "dark";
     let DETAILED_MODE = localStorage.getItem("detailed-mode") ? localStorage.getItem("detailed-mode") === "true" : true;
     let MAP_TYPE = urlParams.get('map') ? urlParams.get('map') : "lines";
+    let PLAY = undefined;
 
     // DOM elements
     const hour_slider = document.getElementById("hour-slider");
@@ -164,6 +169,7 @@ window.onload = function () {
     const dates_fieldset = document.getElementById("dates-fieldset");
     const btn_color = document.getElementById("toggle-color");
     const btn_detail = document.getElementById("toggle-detail");
+    const btn_play = document.getElementById("toggle-play");
 
     // Initialize map
     var map = L.map('map', { zoomControl: false }).setView([38.719604, -9.139209], 13);
@@ -204,11 +210,11 @@ window.onload = function () {
 
     // Listeners 
     hour_slider.oninput = (e) => {
-        formChange(undefined, undefined, undefined, e.target.value, undefined); // When user is just sliding, don't update map
+        formChange(undefined, undefined, undefined, e.target.value, undefined, undefined); // When user is just sliding, don't update map
     }
     hour_slider.onchange = (e) => {
         HOUR = e.target.value;
-        formChange(map, MAP_TYPE, DATE, HOUR, OPERATORS);
+        formChange(map, MAP_TYPE, DATE, HOUR, OPERATORS, DETAILED_MODE);
     }
 
     operator_checkbox.forEach(checkbox => {
@@ -216,7 +222,7 @@ window.onload = function () {
             let operator = e.target.value;
             if (e.target.checked) { // true, add to operators
                 OPERATORS = [...new Set([...OPERATORS, operator])];
-                formChange(map, MAP_TYPE, DATE, HOUR, operator);
+                formChange(map, MAP_TYPE, DATE, HOUR, operator, DETAILED_MODE);
             } else { // Remove
                 OPERATORS = [...new Set(OPERATORS.filter(v => v !== operator))];
                 if (geojsonLayer[operator]) geojsonLayer[operator].remove();
@@ -229,7 +235,7 @@ window.onload = function () {
             console.log("date_checkbox", e.target.value)
             if (e.target.checked) { // true, add to operators
                 DATE = e.target.value;
-                formChange(map, MAP_TYPE, DATE, HOUR, OPERATORS);
+                formChange(map, MAP_TYPE, DATE, HOUR, OPERATORS, DETAILED_MODE);
             }
 
         }
@@ -240,7 +246,7 @@ window.onload = function () {
             console.log("map_checkbox", e.target.value)
             if (e.target.checked) { // true, add to operators
                 MAP_TYPE = e.target.value;
-                formChange(map, MAP_TYPE, DATE, HOUR, OPERATORS);
+                formChange(map, MAP_TYPE, DATE, HOUR, OPERATORS, DETAILED_MODE);
             }
         }
     })
@@ -253,10 +259,28 @@ window.onload = function () {
     btn_detail.onclick = () => {
         DETAILED_MODE = !DETAILED_MODE;
         localStorage.setItem("detailed-mode", DETAILED_MODE);
-        toggleDetails(btn_detail, DETAILED_MODE);
+        toggleDetails(btn_detail, DETAILED_MODE, MAP_TYPE);
     }
+    
+    btn_play.onclick = () => {
+        if (PLAY) {
+            clearInterval(PLAY);
+            PLAY = undefined;
+            hour_slider.disabled=false;
+            btn_play.innerHTML = "⏩";
+        } else {
+            btn_play.innerHTML = "⏹️";
+            hour_slider.disabled=true;
+            PLAY = setInterval(() => {
+                HOUR = HOUR+1>=DB_HOURS.length ? 0 : HOUR+1;
+                hour_slider.value = HOUR;
+                formChange(map, MAP_TYPE, DATE, HOUR, OPERATORS, DETAILED_MODE);
+            }, 3000)
+        }
+    }
+    btn_play.innerHTML = "⏩";
 
     // Initialize form 
-    formChange(map, MAP_TYPE, DATE, HOUR, OPERATORS);
-    toggleDetails(btn_detail, DETAILED_MODE);
+    formChange(map, MAP_TYPE, DATE, HOUR, OPERATORS, DETAILED_MODE);
+    toggleDetails(btn_detail, DETAILED_MODE, MAP_TYPE);
 }
