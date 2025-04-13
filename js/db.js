@@ -1,5 +1,5 @@
 // Global attributes
-const BASE_URL = "https://lisboaparapessoas.github.io/rede-madrugada/geojson";
+const BASE_URL = "https://lpp.gmatos.pt/rede-madrugada/geojson";
 const DB_OPERATORS = {
     Carris: { color: '#003f8f', name: 'Carris Municipal' },
     CarrisMetropolitana: { color: '#ffdd01', name: 'Carris Metropolitana' },
@@ -17,6 +17,7 @@ const DB_DATES = {
     20250405: "Sábados",
 }
 const MAX_SERVICES_LINE = 15;
+const MAX_SERVICES_PARISH = 270;
 
 const MAP_DARK = 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png';
 const MAP_LIGHT = 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png';

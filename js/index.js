@@ -1,12 +1,13 @@
 // State
 let geojsonLayer = {}; // Each operator will have one
-let maxFrequency = 0;
+let maxFrequencyOp = 0;
+let maxFrequencyPa = 0;
 
-const getShapesLayer = (operator, date, hour) => {
+const getShapesLayerOperator = (operator, date, hour) => {
     return new L.GeoJSON.AJAX(`${BASE_URL}/${date}/${operator}_${String(hour).padStart(2, '0')}00_shapes_aggregated.geojson`, {
         style: function (feature) {
             let properties = feature.properties;
-            if (properties.services_sum > maxFrequency) maxFrequency = properties.services_sum;
+            if (properties.services_sum > maxFrequencyOp) maxFrequencyOp = properties.services_sum;
 
             // Weight depending on 
             let weight = 0;
@@ -20,7 +21,6 @@ const getShapesLayer = (operator, date, hour) => {
         },
         onEachFeature: function (feature, layer) {
             let properties = feature.properties;
-            let colorIndex = Math.min(Math.ceil(properties.services_sum*GRADIENT.length/MAX_SERVICES_LINE), GRADIENT.length-1);
             layer.bindPopup(`
                         <h6>${DB_OPERATORS[operator]['name']}</h6>
                         <dl>
@@ -28,14 +28,44 @@ const getShapesLayer = (operator, date, hour) => {
                             <dd><b>${properties.route_short_name_unique}</b><dd>
                             <dt>Nr circulações<dt>
                             <dd><b>${Math.ceil(properties.services_sum)}</b></dd>
-                            <dt>Color index: ${colorIndex}<dt>
                         </dl>
                     `);
         }
     });
 }
 
-const formChange = (map, date, hourIndex, operators) => {
+const getShapesLayerParish = (date, hour) => {
+    return new L.GeoJSON.AJAX(`${BASE_URL}/${date}/${String(hour).padStart(2, '0')}00.geojson`, {
+        style: function (feature) {
+            let properties = feature.properties;
+            if (properties.services > maxFrequencyPa) maxFrequencyPa = properties.services;
+            console.log("style", feature, properties);
+
+            // Color
+            let colorIndex = Math.min(Math.ceil(properties.services*GRADIENT.length/MAX_SERVICES_PARISH), GRADIENT.length-1);
+            return { color: '#FFFFFF', 
+                fillColor: properties.services===0 ? 'rgb(0,0,0,0)' : GRADIENT[colorIndex], 
+                fill: true ,
+                fillOpacity: 1
+            };
+        },
+        onEachFeature: function (feature, layer) {
+            let properties = feature.properties;
+            layer.bindPopup(`
+                        <h6>${properties.Freguesia}</h6>
+                        <dl>
+                            <dt>Concelho<dt>
+                            <dd><b>${properties.Concelho}</b><dd>
+                            <dt>Nr circulações<dt>
+                            <dd><b>${Math.ceil(properties.services)}</b></dd>
+                        </dl>
+                    `);
+        }
+    });
+}
+
+
+const formChange = (map, mapType, date, hourIndex, operators) => {
     console.log("form change", date, hourIndex, operators);
     let hour = DB_HOURS[hourIndex];
 
@@ -43,19 +73,26 @@ const formChange = (map, date, hourIndex, operators) => {
     hour_text.innerHTML = String(hour).padStart(2, '0');
 
     if (map && date && hour !== undefined && operators) {
-        if (Array.isArray(operators)) {
-            // Only remove other operators when a new list is provided
-            // This allows to add a new operator individually, without removing the others
-            Object.values(geojsonLayer).forEach(layer => layer.remove());
-        } else {
-            // Otherwise, just convert the single operator into a list for the next step to work :)
-            operators = [operators];
-        }
+        if (mapType=="lines") {
+            if (Array.isArray(operators)) {
+                // Only remove other operators when a new list is provided
+                // This allows to add a new operator individually, without removing the others
+                Object.values(geojsonLayer).forEach(layer => layer.remove());
+            } else {
+                // Otherwise, just convert the single operator into a list for the next step to work :)
+                operators = [operators];
+            }
 
-        operators.forEach(op => {
-            geojsonLayer[op] = getShapesLayer(op, date, hour);
-            geojsonLayer[op].addTo(map);
-        })
+            operators.forEach(op => {
+                geojsonLayer[op] = getShapesLayerOperator(op, date, hour);
+                geojsonLayer[op].addTo(map);
+            })
+        } else {
+            Object.values(geojsonLayer).forEach(layer => layer.remove());
+
+            geojsonLayer[date] = getShapesLayerParish(date, hour);
+            geojsonLayer[date].addTo(map);
+        }
     }
 }
 
@@ -89,6 +126,7 @@ window.onload = function () {
     let DATE = urlParams.get('date') && Object.keys(DB_DATES).includes(urlParams.get('date')) ? urlParams.get('date') : Object.keys(DB_DATES)[0];
     let COLOR_MODE = localStorage.getItem("color-mode") ? localStorage.getItem("color-mode") : "dark";
     let DETAILED_MODE = localStorage.getItem("detailed-mode") ? localStorage.getItem("detailed-mode") === "true" : true;
+    let MAP_TYPE = "lines";
 
     // DOM elements
     const hour_slider = document.getElementById("hour-slider");
@@ -132,13 +170,15 @@ window.onload = function () {
     dates_fieldset.innerHTML = dates_form_html;
     const date_checkbox = document.getElementsByName("date-checkbox");
 
+    const map_checkbox = document.getElementsByName("map-checkbox");
+
     // Listeners 
     hour_slider.oninput = (e) => {
-        formChange(undefined, undefined, e.target.value, undefined); // When user is just sliding, don't update map
+        formChange(undefined, undefined, undefined, e.target.value, undefined); // When user is just sliding, don't update map
     }
     hour_slider.onchange = (e) => {
         HOUR = e.target.value;
-        formChange(map, DATE, HOUR, OPERATORS);
+        formChange(map, MAP_TYPE, DATE, HOUR, OPERATORS);
     }
 
     operator_checkbox.forEach(checkbox => {
@@ -146,7 +186,7 @@ window.onload = function () {
             let operator = e.target.value;
             if (e.target.checked) { // true, add to operators
                 OPERATORS = [...new Set([...OPERATORS, operator])];
-                formChange(map, DATE, HOUR, operator);
+                formChange(map, MAP_TYPE, DATE, HOUR, operator);
             } else { // Remove
                 OPERATORS = [...new Set(OPERATORS.filter(v => v !== operator))];
                 if (geojsonLayer[operator]) geojsonLayer[operator].remove();
@@ -159,7 +199,18 @@ window.onload = function () {
             console.log("date_checkbox", e.target.value)
             if (e.target.checked) { // true, add to operators
                 DATE = e.target.value;
-                formChange(map, DATE, HOUR, OPERATORS);
+                formChange(map, MAP_TYPE, DATE, HOUR, OPERATORS);
+            }
+
+        }
+    })
+
+    map_checkbox.forEach(checkbox => {
+        checkbox.onchange = (e) => {
+            console.log("map_checkbox", e.target.value)
+            if (e.target.checked) { // true, add to operators
+                MAP_TYPE = e.target.value;
+                formChange(map, MAP_TYPE, DATE, HOUR, OPERATORS);
             }
 
         }
@@ -177,6 +228,6 @@ window.onload = function () {
     }
 
     // Initialize form 
-    formChange(map, DATE, HOUR, OPERATORS);
+    formChange(map, MAP_TYPE, DATE, HOUR, OPERATORS);
     toggleDetails(btn_detail, DETAILED_MODE);
 }
