@@ -3,7 +3,6 @@ body {
     width: 100vw;
     overflow: hidden;
     margin: 0;
-
 }
 
 fieldset {
@@ -22,6 +21,14 @@ dl dd {
     text-align: right;
 }
 
+#logo {
+    position: absolute;
+    top: 5%;
+    right: 2.5%;
+    width: 100px;
+    z-index: 10001;
+}
+
 #controls-panel {
     background-color: #ffffff;
     border-radius: 8px;
@@ -31,7 +38,6 @@ dl dd {
     width: 25%;
     max-height: 75vh;
     height: auto;
-    z-index: 1000;
 
     padding: 24px 8px;
     text-align: center;
@@ -42,12 +48,23 @@ dl dd {
 
     z-index: 10000;
 }
+fieldset, button  {font-size: .8rem!important;}
+h6  {font-size: .9rem!important;}
+h3  {font-size: 1.1rem!important;}
 
 @media only screen and (max-width: 992px) {
     #controls-panel {
         width: 45%;
         left: 5%;
         top: 2.5%;
+    }
+    #controls-panel h3 {
+        margin-right: 50px!important;
+    }
+    #logo {
+        right: 5%;
+        top: 3.5%;
+        width: 50px;
     }
     #controls-panel img {
         width: 15%;
@@ -98,11 +115,15 @@ div {
     height: auto;
 }
 
-div.hidden {
+div.hidden, button.hidden {
     display: none;
     opacity: 0;
     visibility: hidden;
     height: 0;
+}
+
+div[role="group"] {
+    box-shadow: none!important;
 }
 
 /** LPP Colors **/

@@ -17,30 +17,29 @@
 
 <body class="iframe">
 
+    <div id="logo">
+        <img src="./static/lpp.png" width="100%" style="margin-right: 8px;" />
+    </div>
+
     <div id="controls-panel" class="overflow-auto">
         <div class="container-fluid" style="display: flex; align-items: center;">
-            <img src="./static/lpp.png" width="25%" style="margin-right: 8px;" />
-            <h3 style="margin: 0; color: #363636; text-align: left;">| Rede madrugada</h3>
+            <h3 style="margin: 0; color: #363636; text-align: left;">Os transportes na AML</h3>
         </div>
         <label class="container-fluid" style="margin-top: 16px;">
             <h6 style="margin: 0;"><span id="hour-text"></span>:00 horas</h6>
             <input id="hour-slider" type="range" />
         </label>
         <div class="container-fluid details">
-            <h6 style="text-align: left;">Operadores</h6>
-            <fieldset id="operator-fieldset"></fieldset>
-        </div>
-        <div class="container-fluid details">
             <h6 style="text-align: left;">Datas</h6>
             <fieldset id="dates-fieldset"></fieldset>
         </div>
-        <div class="container-fluid details" style="margin-bottom: 8px;">
-            <button class="secondary outline" id="toggle-color" style="width: 100%"></button>
+        <div class="container-fluid details">
+            <h6 style="text-align: left;">Operadores</h6>
+            <fieldset id="operator-fieldset"></fieldset>
         </div>
-        <div class="container-fluid">
-            <fieldset>
-                <button class="secondary outline" id="toggle-detail" style="width: 100%"></button>
-            </fieldset>
+        <div class="container-fluid" role="group">
+            <button class="secondary outline" id="toggle-color"></button>
+            <button class="secondary outline" id="toggle-detail"></button>
         </div>
     </div>
 

@@ -3,32 +3,41 @@ let geojsonLayer = {}; // Each operator will have one
 let maxFrequency = 0;
 
 const getShapesLayer = (operator, date, hour) => {
-    return new L.GeoJSON.AJAX(`${BASE_URL}/${date}/${operator}_${String(hour).padStart(2, '0')}00_shapes.geojson`, {
+    return new L.GeoJSON.AJAX(`${BASE_URL}/${date}/${operator}_${String(hour).padStart(2, '0')}00_shapes_aggregated.geojson`, {
         style: function (feature) {
             let properties = feature.properties;
-            if (properties.services > maxFrequency) maxFrequency = properties.services;
-            let weight = properties.services === 0 ? 0 : (properties.services / 16) * 5; // Max weight of 5
-            return { color: DB_OPERATORS[operator]['color'], weight: weight };
+            if (properties.services_sum > maxFrequency) maxFrequency = properties.services_sum;
+
+            // Weight depending on 
+            let weight = 0;
+            weight = properties.services_sum === 0 ? 0 : (properties.services_sum / MAX_SERVICES_LINE) * 5; // Max weight of 5
+            if (weight<1.5 && properties.services_sum>0) weight = 1.5;
+
+            // Color
+            let colorIndex = Math.min(Math.ceil(properties.services_sum*GRADIENT.length/MAX_SERVICES_LINE), GRADIENT.length-1);
+            // DB_OPERATORS[operator]['color']
+            return { color: GRADIENT[colorIndex], weight: weight };
         },
         onEachFeature: function (feature, layer) {
             let properties = feature.properties;
+            let colorIndex = Math.min(Math.ceil(properties.services_sum*GRADIENT.length/MAX_SERVICES_LINE), GRADIENT.length-1);
             layer.bindPopup(`
                         <h6>${DB_OPERATORS[operator]['name']}</h6>
                         <dl>
-                            <dt>Linha<dt>
-                            <dd><b>${properties.route_short_name}</b>, ${properties.route_long_name}<dd>
+                            <dt>Linha(s)<dt>
+                            <dd><b>${properties.route_short_name_unique}</b><dd>
                             <dt>Nr circulações<dt>
-                            <dd><b>${Math.ceil(properties.services)}</b></dd>
-                            <dt>Intervalo médio<dt>
-                            <dd><b>${Math.ceil(properties.mean_headways / 60)} minutos</b></dd>
+                            <dd><b>${Math.ceil(properties.services_sum)}</b></dd>
+                            <dt>Color index: ${colorIndex}<dt>
                         </dl>
                     `);
         }
     });
 }
 
-const formChange = (map, date, hour, operators) => {
-    console.log("form change", date, hour, operators);
+const formChange = (map, date, hourIndex, operators) => {
+    console.log("form change", date, hourIndex, operators);
+    let hour = DB_HOURS[hourIndex];
 
     hour_text = document.getElementById("hour-text");
     hour_text.innerHTML = String(hour).padStart(2, '0');
@@ -75,7 +84,7 @@ window.onload = function () {
     if (urlParams.get('iframe')===null) document.getElementsByClassName("iframe")[0].classList.remove("iframe");
 
     // State
-    let HOUR = Math.min(...DB_HOURS);
+    let HOUR = 0;
     let OPERATORS = Object.keys(DB_OPERATORS);
     let DATE = urlParams.get('date') && Object.keys(DB_DATES).includes(urlParams.get('date')) ? urlParams.get('date') : Object.keys(DB_DATES)[0];
     let COLOR_MODE = localStorage.getItem("color-mode") ? localStorage.getItem("color-mode") : "dark";
@@ -99,9 +108,9 @@ window.onload = function () {
 
 
     // Addapt form to database
-    hour_slider.max = Math.max(...DB_HOURS);
-    hour_slider.min = Math.min(...DB_HOURS);
-    hour_slider.value = Math.min(...DB_HOURS);
+    hour_slider.min = 0;
+    hour_slider.max = DB_HOURS.length-1;
+    hour_slider.value = 0;
 
     let operators_form_html = "";
     Object.keys(DB_OPERATORS).map(operator => {
@@ -117,7 +126,7 @@ window.onload = function () {
     Object.keys(DB_DATES).map((day, i) => {
         let label = DB_DATES[day];
         dates_form_html += `
-                    <label htmlFor="${day}"><input type="radio" value="${day}" name="date-checkbox" ${i === 0 ? 'checked' : ''} />${label}</label>
+                    <label htmlFor="${day}"><input type="radio" value="${day}" name="date-checkbox" ${DATE==day ? 'checked' : ''} />${label}</label>
                 `
     })
     dates_fieldset.innerHTML = dates_form_html;
