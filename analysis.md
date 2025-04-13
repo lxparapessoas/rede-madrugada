@@ -9,6 +9,13 @@ através dos respetivos ficheiros GTFS.
 
 ## Processamento dos GTFS
 
+    library(tidytransit)
+    library(sf)
+    library(dplyr)
+    library(GTFSwizard)
+    library(stplanr)
+    library(mapview)
+
 ### Parâmetros
 
     OPERATORS <- c("Carris", "CarrisMetropolitana", "MetroLisboa", "MobiCascais", "MTS", "TCB", "CP", "Fertagus", "TTSL")
@@ -31,8 +38,25 @@ através dos respetivos ficheiros GTFS.
       as_hms(time_col)  # Convert back to hms
     }
 
+    # Helpers to summarise with mixed data types
+    summarise_text_unique <- function(x) {
+      if (all(sapply(x, is.numeric))) return (NA)
+      # print(sprintf("> Sumarise text %d: %s", length(x), paste(x, collapse=",")))
+      return(paste(unique(x), collapse=", "))
+    }
+    summarise_number_sum <- function(x) {
+      if (all(sapply(x, is.numeric))) return (sum(x))
+      return(NA)
+    }
+
 ### Processamento
 
+    # Dev parameters, to avoid loop
+    # o = "CarrisMetropolitana"
+    # d = "2025-04-09"
+    # h = 8
+
+    # Loop processing
     for (o in OPERATORS) {
       print(sprintf("OPERATOR %s...", o))
       gtfs_src = sprintf("%s/%s.zip", FOLDER_GTFS_SOURCE, o)
@@ -50,9 +74,9 @@ através dos respetivos ficheiros GTFS.
         warning("GTFS has no shapes file, generating it...")
         gtfs_w = GTFSwizard::read_gtfs(gtfs_src)
         gtfs$shapes = gtfs_w$shapes
-        print(sprintf("> Merging trips to add new shapes id (%d rows)", length(gtfs$trips$trip_id)))
+        print(sprintf("> Merging trips to add new shapes id (%d rows)", nrow(gtfs$trips)))
         gtfs$trips <- left_join(gtfs$trips, gtfs_w$trips[, c("trip_id", "shape_id")], by = "trip_id", suffix=c("_old", ""))
-        print(sprintf("> Merged: %d rows", length(gtfs$trips$trip_id)))
+        print(sprintf("> Merged: %d rows", nrow(gtfs$trips)))
         print("Done!")
       }
       
@@ -75,442 +99,45 @@ através dos respetivos ficheiros GTFS.
           )
           if (is.null(gtfs_hour)) next
           
-          print(sprintf("Filtered %d stops, %d routes and %d stop times", length(gtfs_hour$stops$stop_id), length(gtfs_hour$routes$route_id), length(gtfs_hour$stop_times$trip_id)))
-          
-          # Write GTFS file
-          folder = sprintf("%s/%s/GTFS", FOLDER_OUTPUT, d)
-          ifelse(!dir.exists(folder), dir.create(folder, recursive=TRUE), FALSE)
-          tidytransit::write_gtfs(gtfs_hour, sprintf("%s/%s_%02d00.zip", folder, o, h))
+          print(sprintf("Filtered %d stops, %d routes and %d stop times", nrow(gtfs_hour$stops), nrow(gtfs_hour$routes), nrow(gtfs_hour$stop_times)))
           
           # Perform aggregated analysis
-          stop_frequency = tidytransit::get_stop_frequency(gtfs_hour, h_start, h_end, by_route=FALSE)
-          route_frequency = tidytransit::get_route_frequency(gtfs_hour, h_start, h_end)
-          
+          route_frequency = tidytransit::get_route_frequency(gtfs_hour, h_start, h_end, service_ids = gtfs_hour$calendar$service_id)
+
           # Prepare GeoJSON
           gtfs_sf <- tidytransit::gtfs_as_sf(gtfs_hour)
-          
-          # Extend GTFS with aggregated analysis results
-          print(sprintf("> Merging stops with aggregated analysis (%d rows)", length(gtfs_sf$stops$stop_id)))
-          gtfs_sf$stops <- left_join(gtfs_sf$stops, stop_frequency, by = "stop_id")
-          print(sprintf("> Merged: %d rows", length(gtfs_sf$stops$stop_id)))
-          
-          print(sprintf("> Merging shapes with aggregated analysis (%d rows)", length(gtfs_sf$shapes$shape_id)))
-          trips_unique <- gtfs_sf$trips %>%
-            group_by(shape_id) %>%
-            slice(1) %>%
-            ungroup()
-          
-          gtfs_sf$shapes <- left_join(gtfs_sf$shapes, trips_unique[, c("shape_id", "route_id")], by = "shape_id")
-          print(sprintf("> Merged: %d rows", length(gtfs_sf$shapes$shape_id)))
+
+          # Extend GTFS with contextual information and aggregated analysis results
+          # > Merge with trips.txt to associate shape_id and route_id
+          print(sprintf("> Merging shapes with aggregated analysis (%d rows)", nrow(gtfs_sf$shapes)))
+          gtfs_sf$shapes <- left_join(gtfs_sf$shapes, gtfs_sf$trips[, c("shape_id", "route_id")], by = "shape_id", multiple="first")
+          print(sprintf("> Merged: %d rows", nrow(gtfs_sf$shapes)))
+          # > Merge with routes.txt to get route_name
           gtfs_sf$shapes <- left_join(gtfs_sf$shapes, gtfs_sf$routes[, c("route_id", "route_short_name", "route_long_name")], by = "route_id")
-          print(sprintf("> Merged: %d rows", length(gtfs_sf$shapes$shape_id)))
+          print(sprintf("> Merged: %d rows", nrow(gtfs_sf$shapes)))
+          # > Finaly, merge with aggregated frequency analysis
           gtfs_sf$shapes <- left_join(gtfs_sf$shapes, route_frequency, by = "route_id")
-          print(sprintf("> Merged: %d rows", length(gtfs_sf$shapes$shape_id)))
+          print(sprintf("> Merged: %d rows", nrow(gtfs_sf$shapes)))
           
           # Compute indicators based on aggregated analysis
           gtfs_sf$shapes$services = 60 / (gtfs_sf$shapes$mean_headways/60)
-          gtfs_sf$stops$services = 60 / (gtfs_sf$stops$mean_headway/60)
 
-          # > Simplify shapes, reduce detail for smaller file size
-          gtfs_sf$shapes$geometry <- sf::st_simplify(gtfs_sf$shapes$geometry, dTolerance = 0.00005)  
-          gtfs_sf$shapes$geometry <- sf::st_zm(gtfs_sf$shapes$geometry, drop = TRUE, what = "ZM")
+          # > Aggregate overlapping shape segments
+          shapes_aggregated <- stplanr::overline2(
+            gtfs_sf$shapes,  
+            c("services", "total_departures", "route_short_name"),
+            fun=list(sum=summarise_number_sum, unique=summarise_text_unique)
+          )
           
-          # > Simplify stops, to reduce file size
-          gtfs_sf$stops <- gtfs_sf$stops[, c("stop_id", "stop_name", "n_departures", "mean_headway")] 
+          lwd <- runif(shapes_aggregated$services_sum, min = 2, max = 7) # Assigns value between min and max following normal distribution
           
           # Write files
           folder = sprintf("%s/%s/GeoJSON", FOLDER_OUTPUT, d)
           ifelse(!dir.exists(folder), dir.create(folder, recursive=TRUE), FALSE)
-          st_write(gtfs_sf$stops,sprintf("%s/%s_%02d00_stops.geojson", folder, o, h), append = FALSE)
-          st_write(gtfs_sf$shapes,sprintf("%s/%s_%02d00_shapes.geojson", folder, o, h), append = FALSE)
+          st_write(shapes_aggregated,sprintf("%s/%s_%02d00_shapes.geojson", folder, o, h), append = FALSE)
         }
       }
     }
-
-    ## [1] "OPERATOR Carris..."
-    ## [1] "Converting stop_times to make sure they don't pass 24:00..."
-    ## [1] "Done!"
-    ## [1] "DAY 2025-03-26..."
-    ## [1] "-----------------------"
-    ## [1] "Analysing GTFS for hour 00 (00:00:00, 00:59:59)..."
-    ## [1] "---"
-
-    ## Warning in filter_stop_times(gtfs_obj, extract_date, min_departure_time, : No
-    ## transfers found in feed, travel_times() or raptor() might produce unexpected
-    ## results
-
-    ## [1] "Filtered 1428 stops, 46 routes and 4167 stop times"
-    ## [1] "> Merging stops with aggregated analysis (1428 rows)"
-    ## [1] "> Merged: 1428 rows"
-    ## [1] "> Merging shapes with aggregated analysis (86 rows)"
-    ## [1] "> Merged: 86 rows"
-    ## [1] "> Merged: 86 rows"
-    ## [1] "> Merged: 86 rows"
-
-    ## Warning in CPL_write_ogr(obj, dsn, layer, driver,
-    ## as.character(dataset_options), : GDAL Error 6: DeleteLayer() not supported by
-    ## this dataset.
-
-    ## Deleting layer not supported by driver `GeoJSON'
-    ## Deleting layer `Carris_0000_stops' failed
-    ## Writing layer `Carris_0000_stops' to data source 
-    ##   `output/2025-03-26/GeoJSON/Carris_0000_stops.geojson' using driver `GeoJSON'
-    ## Updating existing layer Carris_0000_stops
-    ## Writing 1428 features with 4 fields and geometry type Point.
-
-    ## Warning in CPL_write_ogr(obj, dsn, layer, driver,
-    ## as.character(dataset_options), : GDAL Error 6: DeleteLayer() not supported by
-    ## this dataset.
-
-    ## Deleting layer not supported by driver `GeoJSON'
-    ## Deleting layer `Carris_0000_shapes' failed
-    ## Writing layer `Carris_0000_shapes' to data source 
-    ##   `output/2025-03-26/GeoJSON/Carris_0000_shapes.geojson' using driver `GeoJSON'
-    ## Updating existing layer Carris_0000_shapes
-    ## Writing 86 features with 10 fields and geometry type Multi Line String.
-    ## [1] "OPERATOR CarrisMetropolitana..."
-    ## [1] "Converting stop_times to make sure they don't pass 24:00..."
-    ## [1] "Done!"
-    ## [1] "DAY 2025-03-26..."
-    ## [1] "-----------------------"
-    ## [1] "Analysing GTFS for hour 00 (00:00:00, 00:59:59)..."
-    ## [1] "---"
-
-    ## Warning in filter_stop_times(gtfs_obj, extract_date, min_departure_time, : No
-    ## transfers found in feed, travel_times() or raptor() might produce unexpected
-    ## results
-
-    ## [1] "Filtered 4141 stops, 173 routes and 8090 stop times"
-    ## [1] "> Merging stops with aggregated analysis (4141 rows)"
-    ## [1] "> Merged: 4141 rows"
-    ## [1] "> Merging shapes with aggregated analysis (255 rows)"
-    ## [1] "> Merged: 255 rows"
-    ## [1] "> Merged: 255 rows"
-    ## [1] "> Merged: 255 rows"
-
-    ## Warning in CPL_write_ogr(obj, dsn, layer, driver,
-    ## as.character(dataset_options), : GDAL Error 6: DeleteLayer() not supported by
-    ## this dataset.
-
-    ## Deleting layer not supported by driver `GeoJSON'
-    ## Deleting layer `CarrisMetropolitana_0000_stops' failed
-    ## Writing layer `CarrisMetropolitana_0000_stops' to data source 
-    ##   `output/2025-03-26/GeoJSON/CarrisMetropolitana_0000_stops.geojson' using driver `GeoJSON'
-    ## Updating existing layer CarrisMetropolitana_0000_stops
-    ## Writing 4141 features with 4 fields and geometry type Point.
-
-    ## Warning in CPL_write_ogr(obj, dsn, layer, driver,
-    ## as.character(dataset_options), : GDAL Error 6: DeleteLayer() not supported by
-    ## this dataset.
-
-    ## Deleting layer not supported by driver `GeoJSON'
-    ## Deleting layer `CarrisMetropolitana_0000_shapes' failed
-    ## Writing layer `CarrisMetropolitana_0000_shapes' to data source 
-    ##   `output/2025-03-26/GeoJSON/CarrisMetropolitana_0000_shapes.geojson' using driver `GeoJSON'
-    ## Updating existing layer CarrisMetropolitana_0000_shapes
-    ## Writing 255 features with 10 fields and geometry type Multi Line String.
-    ## [1] "OPERATOR MetroLisboa..."
-    ## [1] "Converting stop_times to make sure they don't pass 24:00..."
-    ## [1] "Done!"
-
-    ## Warning: GTFS has no shapes file, generating it...
-
-    ## get_shapes() reconstructs the shapes table using euclidean approximation, based on the coordinates and sequence of stops for each trip, and may not be accurate.
-
-    ## Joining with `by = join_by(trip_id)`
-    ## Joining with `by = join_by(trip_id)`
-
-    ## [1] "> Merging trips to add new shapes id (2514 rows)"
-    ## [1] "> Merged: 2514 rows"
-    ## [1] "Done!"
-    ## [1] "DAY 2025-03-26..."
-    ## [1] "-----------------------"
-    ## [1] "Analysing GTFS for hour 00 (00:00:00, 00:59:59)..."
-    ## [1] "---"
-    ## [1] "Filtered 68 stops, 4 routes and 714 stop times"
-    ## [1] "> Merging stops with aggregated analysis (68 rows)"
-    ## [1] "> Merged: 68 rows"
-    ## [1] "> Merging shapes with aggregated analysis (8 rows)"
-    ## [1] "> Merged: 8 rows"
-    ## [1] "> Merged: 8 rows"
-    ## [1] "> Merged: 8 rows"
-
-    ## Warning in CPL_write_ogr(obj, dsn, layer, driver,
-    ## as.character(dataset_options), : GDAL Error 6: DeleteLayer() not supported by
-    ## this dataset.
-
-    ## Deleting layer not supported by driver `GeoJSON'
-    ## Deleting layer `MetroLisboa_0000_stops' failed
-    ## Writing layer `MetroLisboa_0000_stops' to data source 
-    ##   `output/2025-03-26/GeoJSON/MetroLisboa_0000_stops.geojson' using driver `GeoJSON'
-    ## Updating existing layer MetroLisboa_0000_stops
-    ## Writing 68 features with 4 fields and geometry type Point.
-
-    ## Warning in CPL_write_ogr(obj, dsn, layer, driver,
-    ## as.character(dataset_options), : GDAL Error 6: DeleteLayer() not supported by
-    ## this dataset.
-
-    ## Deleting layer not supported by driver `GeoJSON'
-    ## Deleting layer `MetroLisboa_0000_shapes' failed
-    ## Writing layer `MetroLisboa_0000_shapes' to data source 
-    ##   `output/2025-03-26/GeoJSON/MetroLisboa_0000_shapes.geojson' using driver `GeoJSON'
-    ## Updating existing layer MetroLisboa_0000_shapes
-    ## Writing 8 features with 10 fields and geometry type Line String.
-    ## [1] "OPERATOR MobiCascais..."
-    ## [1] "Converting stop_times to make sure they don't pass 24:00..."
-    ## [1] "Done!"
-    ## [1] "DAY 2025-03-26..."
-    ## [1] "-----------------------"
-    ## [1] "Analysing GTFS for hour 00 (00:00:00, 00:59:59)..."
-    ## [1] "---"
-
-    ## Warning in filter_stop_times(gtfs_obj, extract_date, min_departure_time, : No
-    ## transfers found in feed, travel_times() or raptor() might produce unexpected
-    ## results
-
-    ## [1] "Filtered 524 stops, 16 routes and 829 stop times"
-    ## [1] "> Merging stops with aggregated analysis (524 rows)"
-    ## [1] "> Merged: 524 rows"
-    ## [1] "> Merging shapes with aggregated analysis (27 rows)"
-    ## [1] "> Merged: 27 rows"
-    ## [1] "> Merged: 27 rows"
-    ## [1] "> Merged: 27 rows"
-
-    ## Warning in CPL_write_ogr(obj, dsn, layer, driver,
-    ## as.character(dataset_options), : GDAL Error 6: DeleteLayer() not supported by
-    ## this dataset.
-
-    ## Deleting layer not supported by driver `GeoJSON'
-    ## Deleting layer `MobiCascais_0000_stops' failed
-    ## Writing layer `MobiCascais_0000_stops' to data source 
-    ##   `output/2025-03-26/GeoJSON/MobiCascais_0000_stops.geojson' using driver `GeoJSON'
-    ## Updating existing layer MobiCascais_0000_stops
-    ## Writing 524 features with 4 fields and geometry type Point.
-
-    ## Warning in CPL_write_ogr(obj, dsn, layer, driver,
-    ## as.character(dataset_options), : GDAL Error 6: DeleteLayer() not supported by
-    ## this dataset.
-
-    ## Deleting layer not supported by driver `GeoJSON'
-    ## Deleting layer `MobiCascais_0000_shapes' failed
-    ## Writing layer `MobiCascais_0000_shapes' to data source 
-    ##   `output/2025-03-26/GeoJSON/MobiCascais_0000_shapes.geojson' using driver `GeoJSON'
-    ## Updating existing layer MobiCascais_0000_shapes
-    ## Writing 27 features with 10 fields and geometry type Multi Line String.
-    ## [1] "OPERATOR MTS..."
-    ## [1] "Converting stop_times to make sure they don't pass 24:00..."
-    ## [1] "Done!"
-    ## [1] "DAY 2025-03-26..."
-    ## [1] "-----------------------"
-    ## [1] "Analysing GTFS for hour 00 (00:00:00, 00:59:59)..."
-    ## [1] "---"
-
-    ## Warning in filter_stop_times(gtfs_obj, extract_date, min_departure_time, : No
-    ## transfers found in feed, travel_times() or raptor() might produce unexpected
-    ## results
-
-    ## [1] "Filtered 19 stops, 3 routes and 170 stop times"
-    ## [1] "> Merging stops with aggregated analysis (19 rows)"
-    ## [1] "> Merged: 19 rows"
-    ## [1] "> Merging shapes with aggregated analysis (6 rows)"
-    ## [1] "> Merged: 6 rows"
-    ## [1] "> Merged: 6 rows"
-    ## [1] "> Merged: 6 rows"
-
-    ## Warning in CPL_write_ogr(obj, dsn, layer, driver,
-    ## as.character(dataset_options), : GDAL Error 6: DeleteLayer() not supported by
-    ## this dataset.
-
-    ## Deleting layer not supported by driver `GeoJSON'
-    ## Deleting layer `MTS_0000_stops' failed
-    ## Writing layer `MTS_0000_stops' to data source 
-    ##   `output/2025-03-26/GeoJSON/MTS_0000_stops.geojson' using driver `GeoJSON'
-    ## Updating existing layer MTS_0000_stops
-    ## Writing 19 features with 4 fields and geometry type Point.
-
-    ## Warning in CPL_write_ogr(obj, dsn, layer, driver,
-    ## as.character(dataset_options), : GDAL Error 6: DeleteLayer() not supported by
-    ## this dataset.
-
-    ## Deleting layer not supported by driver `GeoJSON'
-    ## Deleting layer `MTS_0000_shapes' failed
-    ## Writing layer `MTS_0000_shapes' to data source 
-    ##   `output/2025-03-26/GeoJSON/MTS_0000_shapes.geojson' using driver `GeoJSON'
-    ## Updating existing layer MTS_0000_shapes
-    ## Writing 6 features with 10 fields and geometry type Line String.
-    ## [1] "OPERATOR TCB..."
-    ## [1] "Converting stop_times to make sure they don't pass 24:00..."
-    ## [1] "Done!"
-    ## [1] "DAY 2025-03-26..."
-    ## [1] "-----------------------"
-    ## [1] "Analysing GTFS for hour 00 (00:00:00, 00:59:59)..."
-    ## [1] "---"
-
-    ## Warning in filter_stop_times(gtfs_obj, extract_date, min_departure_time, : No
-    ## transfers found in feed, travel_times() or raptor() might produce unexpected
-    ## results
-
-    ## [1] "Filtered 136 stops, 6 routes and 282 stop times"
-    ## [1] "> Merging stops with aggregated analysis (136 rows)"
-    ## [1] "> Merged: 136 rows"
-    ## [1] "> Merging shapes with aggregated analysis (10 rows)"
-    ## [1] "> Merged: 10 rows"
-    ## [1] "> Merged: 10 rows"
-    ## [1] "> Merged: 10 rows"
-
-    ## Warning in CPL_write_ogr(obj, dsn, layer, driver,
-    ## as.character(dataset_options), : GDAL Error 6: DeleteLayer() not supported by
-    ## this dataset.
-
-    ## Deleting layer not supported by driver `GeoJSON'
-    ## Deleting layer `TCB_0000_stops' failed
-    ## Writing layer `TCB_0000_stops' to data source 
-    ##   `output/2025-03-26/GeoJSON/TCB_0000_stops.geojson' using driver `GeoJSON'
-    ## Updating existing layer TCB_0000_stops
-    ## Writing 136 features with 4 fields and geometry type Point.
-
-    ## Warning in CPL_write_ogr(obj, dsn, layer, driver,
-    ## as.character(dataset_options), : GDAL Error 6: DeleteLayer() not supported by
-    ## this dataset.
-
-    ## Deleting layer not supported by driver `GeoJSON'
-    ## Deleting layer `TCB_0000_shapes' failed
-    ## Writing layer `TCB_0000_shapes' to data source 
-    ##   `output/2025-03-26/GeoJSON/TCB_0000_shapes.geojson' using driver `GeoJSON'
-    ## Updating existing layer TCB_0000_shapes
-    ## Writing 10 features with 10 fields and geometry type Multi Line String.
-    ## [1] "OPERATOR CP..."
-    ## [1] "Converting stop_times to make sure they don't pass 24:00..."
-    ## [1] "Done!"
-
-    ## Warning: GTFS has no shapes file, generating it...
-
-    ## get_shapes() reconstructs the shapes table using euclidean approximation, based on the coordinates and sequence of stops for each trip, and may not be accurate.
-    ## Joining with `by = join_by(trip_id)`Joining with `by = join_by(trip_id)`
-
-    ## [1] "> Merging trips to add new shapes id (1206 rows)"
-    ## [1] "> Merged: 1206 rows"
-    ## [1] "Done!"
-    ## [1] "DAY 2025-03-26..."
-    ## [1] "-----------------------"
-    ## [1] "Analysing GTFS for hour 00 (00:00:00, 00:59:59)..."
-    ## [1] "---"
-
-    ## Warning in filter_stop_times(gtfs_obj, extract_date, min_departure_time, : No
-    ## transfers found in feed, travel_times() or raptor() might produce unexpected
-    ## results
-
-    ## [1] "Filtered 55 stops, 12 routes and 214 stop times"
-    ## [1] "> Merging stops with aggregated analysis (55 rows)"
-    ## [1] "> Merged: 55 rows"
-    ## [1] "> Merging shapes with aggregated analysis (12 rows)"
-    ## [1] "> Merged: 12 rows"
-    ## [1] "> Merged: 12 rows"
-    ## [1] "> Merged: 12 rows"
-
-    ## Warning in CPL_write_ogr(obj, dsn, layer, driver,
-    ## as.character(dataset_options), : GDAL Error 6: DeleteLayer() not supported by
-    ## this dataset.
-
-    ## Deleting layer not supported by driver `GeoJSON'
-    ## Deleting layer `CP_0000_stops' failed
-    ## Writing layer `CP_0000_stops' to data source 
-    ##   `output/2025-03-26/GeoJSON/CP_0000_stops.geojson' using driver `GeoJSON'
-    ## Updating existing layer CP_0000_stops
-    ## Writing 55 features with 4 fields and geometry type Point.
-
-    ## Warning in CPL_write_ogr(obj, dsn, layer, driver,
-    ## as.character(dataset_options), : GDAL Error 6: DeleteLayer() not supported by
-    ## this dataset.
-
-    ## Deleting layer not supported by driver `GeoJSON'
-    ## Deleting layer `CP_0000_shapes' failed
-    ## Writing layer `CP_0000_shapes' to data source 
-    ##   `output/2025-03-26/GeoJSON/CP_0000_shapes.geojson' using driver `GeoJSON'
-    ## Updating existing layer CP_0000_shapes
-    ## Writing 12 features with 10 fields and geometry type Line String.
-    ## [1] "OPERATOR Fertagus..."
-    ## [1] "Converting stop_times to make sure they don't pass 24:00..."
-    ## [1] "Done!"
-    ## [1] "DAY 2025-03-26..."
-    ## [1] "-----------------------"
-    ## [1] "Analysing GTFS for hour 00 (00:00:00, 00:59:59)..."
-    ## [1] "---"
-
-    ## Warning in filter_stop_times(gtfs_obj, extract_date, min_departure_time, : No
-    ## transfers found in feed, travel_times() or raptor() might produce unexpected
-    ## results
-
-    ## [1] "Filtered 14 stops, 2 routes and 47 stop times"
-    ## [1] "> Merging stops with aggregated analysis (14 rows)"
-    ## [1] "> Merged: 14 rows"
-    ## [1] "> Merging shapes with aggregated analysis (3 rows)"
-    ## [1] "> Merged: 3 rows"
-    ## [1] "> Merged: 3 rows"
-    ## [1] "> Merged: 3 rows"
-
-    ## Warning in CPL_write_ogr(obj, dsn, layer, driver,
-    ## as.character(dataset_options), : GDAL Error 6: DeleteLayer() not supported by
-    ## this dataset.
-
-    ## Deleting layer not supported by driver `GeoJSON'
-    ## Deleting layer `Fertagus_0000_stops' failed
-    ## Writing layer `Fertagus_0000_stops' to data source 
-    ##   `output/2025-03-26/GeoJSON/Fertagus_0000_stops.geojson' using driver `GeoJSON'
-    ## Updating existing layer Fertagus_0000_stops
-    ## Writing 14 features with 4 fields and geometry type Point.
-
-    ## Warning in CPL_write_ogr(obj, dsn, layer, driver,
-    ## as.character(dataset_options), : GDAL Error 6: DeleteLayer() not supported by
-    ## this dataset.
-
-    ## Deleting layer not supported by driver `GeoJSON'
-    ## Deleting layer `Fertagus_0000_shapes' failed
-    ## Writing layer `Fertagus_0000_shapes' to data source 
-    ##   `output/2025-03-26/GeoJSON/Fertagus_0000_shapes.geojson' using driver `GeoJSON'
-    ## Updating existing layer Fertagus_0000_shapes
-    ## Writing 3 features with 10 fields and geometry type Line String.
-    ## [1] "OPERATOR TTSL..."
-    ## [1] "Converting stop_times to make sure they don't pass 24:00..."
-    ## [1] "Done!"
-    ## [1] "DAY 2025-03-26..."
-    ## [1] "-----------------------"
-    ## [1] "Analysing GTFS for hour 00 (00:00:00, 00:59:59)..."
-    ## [1] "---"
-
-    ## Warning in filter_stop_times(gtfs_obj, extract_date, min_departure_time, : No
-    ## transfers found in feed, travel_times() or raptor() might produce unexpected
-    ## results
-
-    ## [1] "Filtered 4 stops, 2 routes and 14 stop times"
-    ## [1] "> Merging stops with aggregated analysis (4 rows)"
-    ## [1] "> Merged: 4 rows"
-    ## [1] "> Merging shapes with aggregated analysis (4 rows)"
-    ## [1] "> Merged: 4 rows"
-    ## [1] "> Merged: 4 rows"
-    ## [1] "> Merged: 4 rows"
-
-    ## Warning in CPL_write_ogr(obj, dsn, layer, driver,
-    ## as.character(dataset_options), : GDAL Error 6: DeleteLayer() not supported by
-    ## this dataset.
-
-    ## Deleting layer not supported by driver `GeoJSON'
-    ## Deleting layer `TTSL_0000_stops' failed
-    ## Writing layer `TTSL_0000_stops' to data source 
-    ##   `output/2025-03-26/GeoJSON/TTSL_0000_stops.geojson' using driver `GeoJSON'
-    ## Updating existing layer TTSL_0000_stops
-    ## Writing 4 features with 4 fields and geometry type Point.
-
-    ## Warning in CPL_write_ogr(obj, dsn, layer, driver,
-    ## as.character(dataset_options), : GDAL Error 6: DeleteLayer() not supported by
-    ## this dataset.
-
-    ## Deleting layer not supported by driver `GeoJSON'
-    ## Deleting layer `TTSL_0000_shapes' failed
-    ## Writing layer `TTSL_0000_shapes' to data source 
-    ##   `output/2025-03-26/GeoJSON/TTSL_0000_shapes.geojson' using driver `GeoJSON'
-    ## Updating existing layer TTSL_0000_shapes
-    ## Writing 4 features with 10 fields and geometry type Line String.
 
 ## Extra
 
