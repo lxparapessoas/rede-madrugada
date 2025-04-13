@@ -12,10 +12,10 @@ const getShapesLayerOperator = (operator, date, hour) => {
             // Weight depending on 
             let weight = 0;
             weight = properties.services_sum === 0 ? 0 : (properties.services_sum / MAX_SERVICES_LINE) * 5; // Max weight of 5
-            if (weight<1.5 && properties.services_sum>0) weight = 1.5;
+            if (weight < 1.5 && properties.services_sum > 0) weight = 1.5;
 
             // Color
-            let colorIndex = Math.min(Math.ceil(properties.services_sum*GRADIENT.length/MAX_SERVICES_LINE), GRADIENT.length-1);
+            let colorIndex = Math.min(Math.ceil(properties.services_sum * GRADIENT.length / MAX_SERVICES_LINE), GRADIENT.length - 1);
             // DB_OPERATORS[operator]['color']
             return { color: GRADIENT[colorIndex], weight: weight };
         },
@@ -34,18 +34,18 @@ const getShapesLayerOperator = (operator, date, hour) => {
     });
 }
 
-const getShapesLayerParish = (date, hour) => {
+const getShapesLayerParishes = (date, hour) => {
     return new L.GeoJSON.AJAX(`${BASE_URL}/${date}/${String(hour).padStart(2, '0')}00.geojson`, {
         style: function (feature) {
             let properties = feature.properties;
             if (properties.services > maxFrequencyPa) maxFrequencyPa = properties.services;
-            console.log("style", feature, properties);
 
             // Color
-            let colorIndex = Math.min(Math.ceil(properties.services*GRADIENT.length/MAX_SERVICES_PARISH), GRADIENT.length-1);
-            return { color: '#FFFFFF', 
-                fillColor: properties.services===0 ? 'rgb(0,0,0,0)' : GRADIENT[colorIndex], 
-                fill: true ,
+            let colorIndex = Math.min(Math.ceil(properties.services * GRADIENT.length / MAX_SERVICES_PARISH), GRADIENT.length - 1);
+            return {
+                color: '#FFFFFF',
+                fillColor: properties.services === 0 ? 'rgb(0,0,0,0)' : GRADIENT[colorIndex],
+                fill: true,
                 fillOpacity: 1
             };
         },
@@ -60,9 +60,21 @@ const getShapesLayerParish = (date, hour) => {
                             <dd><b>${Math.ceil(properties.services)}</b></dd>
                         </dl>
                     `);
-        }
+        },
     });
 }
+
+const getShapesLayerMunicipalities = () => {
+    return new L.GeoJSON.AJAX(`${BASE_URL}/municipios.geojson`, {
+        style: function () {
+            return {
+                color: '#363636',
+                fill: false
+            };
+        },
+    });
+}
+
 
 
 const formChange = (map, mapType, date, hourIndex, operators) => {
@@ -73,7 +85,7 @@ const formChange = (map, mapType, date, hourIndex, operators) => {
     hour_text.innerHTML = String(hour).padStart(2, '0');
 
     if (map && date && hour !== undefined && operators) {
-        if (mapType=="lines") {
+        if (mapType == "lines") {
             if (Array.isArray(operators)) {
                 // Only remove other operators when a new list is provided
                 // This allows to add a new operator individually, without removing the others
@@ -88,10 +100,22 @@ const formChange = (map, mapType, date, hourIndex, operators) => {
                 geojsonLayer[op].addTo(map);
             })
         } else {
-            Object.values(geojsonLayer).forEach(layer => layer.remove());
+            Object.keys(geojsonLayer).forEach(key => {if (key!=="MUN") geojsonLayer[key].remove()});
 
-            geojsonLayer[date] = getShapesLayerParish(date, hour);
+            geojsonLayer[date] = getShapesLayerParishes(date, hour);
             geojsonLayer[date].addTo(map);
+            geojsonLayer[date].bringToBack();
+            geojsonLayer[date].on('data:loaded', function() {
+                geojsonLayer[date].bringToBack();
+            }) 
+            if (!geojsonLayer['MUN'] || !geojsonLayer['MUN']._map) {
+                geojsonLayer['MUN'] = getShapesLayerMunicipalities(date, hour);
+                geojsonLayer['MUN'].addTo(map);
+                geojsonLayer['MUN'].bringToFront();
+                geojsonLayer['MUN'].on('data:loaded', function() {
+                    geojsonLayer[date + 'MUN'].bringToFront();
+                }) 
+            }
         }
     }
 }
@@ -118,7 +142,7 @@ window.onload = function () {
 
     // Get URL params
     const urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.get('iframe')===null) document.getElementsByClassName("iframe")[0].classList.remove("iframe");
+    if (urlParams.get('iframe') === null) document.getElementsByClassName("iframe")[0].classList.remove("iframe");
 
     // State
     let HOUR = 0;
@@ -147,7 +171,7 @@ window.onload = function () {
 
     // Addapt form to database
     hour_slider.min = 0;
-    hour_slider.max = DB_HOURS.length-1;
+    hour_slider.max = DB_HOURS.length - 1;
     hour_slider.value = 0;
 
     let operators_form_html = "";
@@ -164,7 +188,7 @@ window.onload = function () {
     Object.keys(DB_DATES).map((day, i) => {
         let label = DB_DATES[day];
         dates_form_html += `
-                    <label htmlFor="${day}"><input type="radio" value="${day}" name="date-checkbox" ${DATE==day ? 'checked' : ''} />${label}</label>
+                    <label htmlFor="${day}"><input type="radio" value="${day}" name="date-checkbox" ${DATE == day ? 'checked' : ''} />${label}</label>
                 `
     })
     dates_fieldset.innerHTML = dates_form_html;
