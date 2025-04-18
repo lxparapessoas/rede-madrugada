@@ -21,13 +21,14 @@ const getShapesLayerOperator = (operator, date, hour) => {
         },
         onEachFeature: function (feature, layer) {
             let properties = feature.properties;
+            console.log(date, hour, operator, properties);
             layer.bindPopup(`
                         <h6>${DB_OPERATORS[operator]['name']}</h6>
                         <dl>
                             <dt>Linha(s)<dt>
                             <dd><b>${properties.route_short_name_unique}</b><dd>
                             <dt>Nr circulações<dt>
-                            <dd><b>${Math.ceil(properties.services_sum)}</b></dd>
+                            <dd><b>${Math.round(properties.services_sum)}</b></dd>
                         </dl>
                     `);
         }
@@ -51,13 +52,17 @@ const getShapesLayerParishes = (date, hour) => {
         },
         onEachFeature: function (feature, layer) {
             let properties = feature.properties;
+            console.log(date, hour, "Freguesia", properties);
+            let operators = properties.lines ? [...new Set(properties.lines.split(",").map(l => l.replace(/[0-9]/g, '').trim()))] : [];
             layer.bindPopup(`
                         <h6>${properties.Freguesia}</h6>
                         <dl>
                             <dt>Concelho<dt>
                             <dd><b>${properties.Concelho}</b><dd>
                             <dt>Nr circulações<dt>
-                            <dd><b>${Math.ceil(properties.services)}</b></dd>
+                            <dd><b>${Math.round(properties.services)}</b></dd>
+                            <dt>Operadores<dt>
+                            <dd><b>${operators && operators.length>0 ? operators.join(', ') : "-"}</b></dd>
                         </dl>
                     `);
         },
@@ -86,10 +91,8 @@ const formChange = (map, mapType, date, hourIndex, operators, detailedMode) => {
 
     if (map && date && hour !== undefined && operators) {
         if (detailedMode && mapType!==undefined && mapType!=="lines") {
-            console.log("MAPTYPE", mapType);
             document.getElementById("operators").classList.add("hidden");
         } else if (detailedMode) {
-            console.log("MAPTYPE", mapType);
             document.getElementById("operators").classList.remove("hidden");
         }
 
