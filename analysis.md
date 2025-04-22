@@ -19,11 +19,15 @@ através dos respetivos ficheiros GTFS.
 ### Parâmetros
 
     OPERATORS <- c("Carris", "CarrisMetropolitana", "MetroLisboa", "MobiCascais", "MTS", "TCB", "CP", "Fertagus", "TTSL")
-    DATES <- c("2025-03-26")
-    HOURS <- 0:8
+    DATES <- c("2025-04-02","2025-04-05")
+    HOURS <- c(20:23, 0:8)
 
     FOLDER_GTFS_SOURCE <-"resources"
     FOLDER_OUTPUT <- "output"
+
+    PARISHES = st_read(sprintf("%s/FreguesiasAML.gpkg", FOLDER_GTFS_SOURCE), layer = "aggregated")
+    PARISHES <- st_transform(PARISHES, csr="CRS:84")
+    # mapview() + mapview(PARISHES["Freguesia"], legend=FALSE)
 
 ### Métodos auxiliares
 
@@ -51,10 +55,7 @@ através dos respetivos ficheiros GTFS.
 
 ### Processamento
 
-    # Dev parameters, to avoid loop
-    # o = "CarrisMetropolitana"
-    # d = "2025-04-09"
-    # h = 8
+#### Operação horária por operador
 
     # Loop processing
     for (o in OPERATORS) {
@@ -128,14 +129,68 @@ através dos respetivos ficheiros GTFS.
             c("services", "total_departures", "route_short_name"),
             fun=list(sum=summarise_number_sum, unique=summarise_text_unique)
           )
-          
-          lwd <- runif(shapes_aggregated$services_sum, min = 2, max = 7) # Assigns value between min and max following normal distribution
-          
+        
           # Write files
           folder = sprintf("%s/%s/GeoJSON", FOLDER_OUTPUT, d)
           ifelse(!dir.exists(folder), dir.create(folder, recursive=TRUE), FALSE)
-          st_write(shapes_aggregated,sprintf("%s/%s_%02d00_shapes.geojson", folder, o, h), append = FALSE)
+          st_write(gtfs_sf$shapes,sprintf("%s/%s_%02d00_shapes.geojson", folder, o, h), append = FALSE)
+          st_write(shapes_aggregated,sprintf("%s/%s_%02d00_shapes_aggregated.geojson", folder, o, h), append = FALSE)
         }
+      }
+    }
+
+#### Operação horária por freguesia
+
+    library(purrr)
+    library(tidyr)  
+
+
+    for (d in DATES) {
+        print(sprintf("DAY %s...", d))
+      
+        for (h in HOURS) {
+          print("-----------------------")
+          print(sprintf("Aggregating shapes for hour %02d...", h))
+          print("---")
+          
+          # Read all geojsons for that hour 
+          folder = sprintf("%s/%s/GeoJSON", FOLDER_OUTPUT, d)
+          line_files <- list.files(folder, pattern = sprintf("\\_%02d00_shapes.geojson$", h), full.names = TRUE)
+        
+          if (length(line_files)==0) {
+            warning(sprintf("> No files for hour %d", h))
+            next
+          }
+          
+          lines <- map_dfr(line_files, function(file) {
+            operator <- sub(".*/([^/_]+)_.*", "\\1", file)
+            df <- st_read(file, quiet = TRUE)
+            # Coerce to numeric (you can also choose character instead if that makes more sense)
+            df$st_dev_headways <- as.numeric(df$st_dev_headways)
+            df$route_short_name_plus = ifelse(operator == df$route_short_name, df$route_short_name, paste0(operator, " ", df$route_short_name))
+            df
+          })
+          lines <- st_transform(lines, st_crs(PARISHES))
+          
+          # Spatial join – find lines intersecting each polygon
+          joined <- st_join(lines, PARISHES, join = st_intersects, left = FALSE)
+          summary_table <- joined %>%
+            group_by(Dicofre) %>%
+            summarise(
+              services = summarise_number_sum(services),
+              lines=summarise_text_unique(route_short_name_plus)
+            )
+          summary_table_clean <- summary_table %>%
+            st_drop_geometry() 
+          result <- PARISHES %>%
+            left_join(summary_table_clean, by = "Dicofre") %>%
+            mutate(
+              services = replace_na(services, 0)
+            )
+          folder = sprintf("%s/%s/GeoJSONParish", FOLDER_OUTPUT, d)
+          ifelse(!dir.exists(folder), dir.create(folder, recursive=TRUE), FALSE)
+          result_reprojected <- st_transform(result, crs=4386)
+          st_write(result_reprojected,sprintf("%s/%02d00.geojson", folder, h), append = FALSE)
       }
     }
 
