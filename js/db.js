@@ -1,5 +1,5 @@
 // Global attributes
-const BASE_URL = "https://lpp.gmatos.pt/rede-madrugada/geojson";
+const BASE_URL = "/rede-madrugada/geojson";
 const DB_OPERATORS = {
     Carris: { color: '#003f8f', name: 'Carris Municipal' },
     CarrisMetropolitana: { color: '#ffdd01', name: 'Carris Metropolitana' },

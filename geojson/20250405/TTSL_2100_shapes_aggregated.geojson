@@ -1,0 +1,13 @@
+{
+"type": "FeatureCollection",
+"name": "TTSL_2100_shapes_aggregated",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+"features": [
+{ "type": "Feature", "properties": { "services_sum": 2.0005557099194222, "total_departures_sum": 10, "route_short_name_sum": null, "services_unique": null, "total_departures_unique": null, "route_short_name_unique": "TTSL" }, "geometry": { "type": "LineString", "coordinates": [ [ -9.231, 38.6742 ], [ -9.229, 38.676 ], [ -9.209, 38.679 ], [ -9.2067, 38.6779 ] ] } },
+{ "type": "Feature", "properties": { "services_sum": 1.0002778549597111, "total_departures_sum": 5, "route_short_name_sum": null, "services_unique": null, "total_departures_unique": null, "route_short_name_unique": "TTSL" }, "geometry": { "type": "LineString", "coordinates": [ [ -9.231, 38.6742 ], [ -9.1985, 38.6949 ], [ -9.2067, 38.6779 ] ] } },
+{ "type": "Feature", "properties": { "services_sum": 4.3636363636363633, "total_departures_sum": 18, "route_short_name_sum": null, "services_unique": null, "total_departures_unique": null, "route_short_name_unique": "TTSL" }, "geometry": { "type": "LineString", "coordinates": [ [ -9.148, 38.688 ], [ -9.1455, 38.705 ] ] } },
+{ "type": "Feature", "properties": { "services_sum": 2.0005557099194222, "total_departures_sum": 8, "route_short_name_sum": null, "services_unique": null, "total_departures_unique": null, "route_short_name_unique": "TTSL" }, "geometry": { "type": "LineString", "coordinates": [ [ -9.1455, 38.705 ], [ -9.0978, 38.6565 ], [ -9.0958, 38.6476 ] ] } },
+{ "type": "Feature", "properties": { "services_sum": 1.0002778549597111, "total_departures_sum": 2, "route_short_name_sum": null, "services_unique": null, "total_departures_unique": null, "route_short_name_unique": "TTSL" }, "geometry": { "type": "LineString", "coordinates": [ [ -9.1455, 38.705 ], [ -9.05, 38.686 ], [ -9.006, 38.7002 ] ] } },
+{ "type": "Feature", "properties": { "services_sum": 3.2, "total_departures_sum": 14, "route_short_name_sum": null, "services_unique": null, "total_departures_unique": null, "route_short_name_unique": "TTSL" }, "geometry": { "type": "LineString", "coordinates": [ [ -9.1336, 38.707 ], [ -9.095, 38.655 ], [ -9.0845, 38.6504 ], [ -9.0784, 38.6518 ] ] } }
+]
+}
