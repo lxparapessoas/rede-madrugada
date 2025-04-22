@@ -48,6 +48,12 @@ dl dd {
 
     z-index: 10000;
 }
+#controls-panel #slider {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: center;
+}
 fieldset, button  {font-size: .8rem!important;}
 h6  {font-size: .9rem!important;}
 h3  {font-size: 1.1rem!important;}

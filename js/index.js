@@ -163,7 +163,7 @@ window.onload = function () {
     let DATE = urlParams.get('date') && Object.keys(DB_DATES).includes(urlParams.get('date')) ? urlParams.get('date') : Object.keys(DB_DATES)[0];
     let COLOR_MODE = localStorage.getItem("color-mode") ? localStorage.getItem("color-mode") : "dark";
     let DETAILED_MODE = localStorage.getItem("detailed-mode") ? localStorage.getItem("detailed-mode") === "true" : true;
-    let MAP_TYPE = urlParams.get('map') ? urlParams.get('map') : "lines";
+    let MAP_TYPE = urlParams.get('map') ? urlParams.get('map') : "parishes"; // Options: parishes, lines
     let PLAY = undefined;
 
     // DOM elements
@@ -211,6 +211,8 @@ window.onload = function () {
 
     const map_checkbox = document.getElementsByName("map-checkbox");
 
+
+
     // Listeners 
     hour_slider.oninput = (e) => {
         formChange(undefined, undefined, undefined, e.target.value, undefined, undefined); // When user is just sliding, don't update map
@@ -235,7 +237,6 @@ window.onload = function () {
 
     date_checkbox.forEach(checkbox => {
         checkbox.onchange = (e) => {
-            console.log("date_checkbox", e.target.value)
             if (e.target.checked) { // true, add to operators
                 DATE = e.target.value;
                 formChange(map, MAP_TYPE, DATE, HOUR, OPERATORS, DETAILED_MODE);
@@ -245,6 +246,10 @@ window.onload = function () {
     })
 
     map_checkbox.forEach(checkbox => {
+        // Initialize with map being displayed (can be changed through URL param)
+        if (checkbox.value===MAP_TYPE) {checkbox.checked=true;}
+        else {checkbox.checked=false;}
+
         checkbox.onchange = (e) => {
             console.log("map_checkbox", e.target.value)
             if (e.target.checked) { // true, add to operators
@@ -270,7 +275,7 @@ window.onload = function () {
             clearInterval(PLAY);
             PLAY = undefined;
             hour_slider.disabled=false;
-            btn_play.innerHTML = "⏩";
+            btn_play.innerHTML = "▶️";
         } else {
             btn_play.innerHTML = "⏹️";
             hour_slider.disabled=true;
@@ -281,7 +286,7 @@ window.onload = function () {
             }, 3000)
         }
     }
-    btn_play.innerHTML = "⏩";
+    btn_play.innerHTML = "▶️";
 
     // Initialize form 
     formChange(map, MAP_TYPE, DATE, HOUR, OPERATORS, DETAILED_MODE);

@@ -25,15 +25,18 @@
         <div class="container-fluid" style="display: flex; align-items: center;">
             <h3 style="margin: 0; color: #363636; text-align: left;">Os transportes na AML</h3>
         </div>
-        <label class="container-fluid" style="margin-top: 16px;">
-            <h6 style="margin: 0;"><span id="hour-text"></span>:00 horas</h6>
-            <input id="hour-slider" type="range" />
-        </label>
+        <div id="slider" class="container-fluid">
+            <label class="" style="margin-top: 16px; margin-right: 8px; flex-grow: 1;">
+                <h6 style="margin: 0;"><span id="hour-text"></span>:00 horas</h6>
+                <input id="hour-slider" type="range" />
+            </label>
+            <button class="secondary outline" id="toggle-play"></button>
+        </div>
         <div class="container-fluid details">
             <h6 style="text-align: left;">Mapa</h6>
             <fieldset id="map-fieldset">
-                <label htmlFor="lines"><input type="radio" value="lines" name="map-checkbox" checked="checked"/>Linhas de transporte público</label>
                 <label htmlFor="parishes"><input type="radio" value="parishes" name="map-checkbox"/>Freguesias</label>
+                <label htmlFor="lines"><input type="radio" value="lines" name="map-checkbox" checked="checked"/>Linhas de transporte público</label>
             </fieldset>
         </div>
         <div class="container-fluid details">
@@ -45,7 +48,6 @@
             <fieldset id="operator-fieldset"></fieldset>
         </div>
         <div class="container-fluid" role="group">
-            <button class="secondary outline" id="toggle-play"></button>
             <button class="secondary outline" id="toggle-color"></button>
             <button class="secondary outline" id="toggle-detail"></button>
         </div>
