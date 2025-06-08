@@ -4,7 +4,10 @@ Análise da oferta dos operadores de transporte público da AML com base na sua 
 
 ## Interface web
 
-https://lisboaparapessoas.github.io/rede-madrugada/
+[![](images/screenshot.png)](https://lxparapessoas.github.io/rede-madrugada/
+)
+
+https://lxparapessoas.github.io/rede-madrugada/
 
 ## Componentes
 
