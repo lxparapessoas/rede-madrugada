@@ -1,0 +1,8 @@
+{
+"type": "FeatureCollection",
+"name": "TTSL_0200_shapes",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+"features": [
+{ "type": "Feature", "properties": { "shape_id": "5185C4-2", "route_id": "7_0", "route_short_name": "TTSL", "route_long_name": "Barreiro - Terreiro do Paço", "total_departures": 2, "median_headways": 3599.0, "mean_headways": 3599.0, "st_dev_headways": 0.0, "stop_count": 2, "services": 1.0002778549597111 }, "geometry": { "type": "LineString", "coordinates": [ [ -9.1336, 38.707 ], [ -9.095, 38.655 ], [ -9.0845, 38.6504 ], [ -9.0784, 38.6518 ] ] } }
+]
+}
