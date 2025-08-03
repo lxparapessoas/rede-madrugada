@@ -68,10 +68,10 @@ const getShapesLayerParishesData = (layer, date, hour) => {
                 }
 
                 layer.bindPopup(`
-                    <h6>${properties.Freguesia}</h6>
+                    <h6>${feature.properties.Freguesia}</h6>
                     <dl>
                         <dt>Concelho<dt>
-                        <dd><b>${properties.Concelho}</b><dd>
+                        <dd><b>${feature.properties.Concelho}</b><dd>
                         <dt>Nr circulações<dt>
                         <dd><b>${Math.round(properties.services)}</b></dd>
                         <dt>Operadores<dt>
