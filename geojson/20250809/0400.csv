@@ -1,12 +1,12 @@
 Dicofre,services,lines
 "110601",5.00027785495971,"Carris 203, CarrisMetropolitana 1740"
 "110602",11.7936123511789,"Carris 201, Carris 203, CarrisMetropolitana 1740, CarrisMetropolitana 3706, CarrisMetropolitana 3708"
-"110607",8.33184814203857,"Carris 203, Carris 208, Carris 210, CP R"
+"110607",7.33157028707886,"Carris 203, Carris 208, Carris 210"
 "110608",7.66805594146522,"Carris 202, CarrisMetropolitana 1740, CarrisMetropolitana 1741, CarrisMetropolitana 1717, CarrisMetropolitana 1706"
 "110610",10.7320345360355,"Carris 202, Carris 203, CarrisMetropolitana 1740, CarrisMetropolitana 1741, CarrisMetropolitana 3706"
 "110611",6.66722237658609,"Carris 202, CarrisMetropolitana 2821, CarrisMetropolitana 1709"
 "110618",13.212630564799,"Carris 206, Carris 736, Carris 207, CarrisMetropolitana 2736, CarrisMetropolitana 2769, CarrisMetropolitana 2776, CarrisMetropolitana 2812"
-"110621",6.33184814203857,"Carris 208, Carris 210, CP R"
+"110621",5.33157028707886,"Carris 208, Carris 210"
 "110633",15.3332374168371,"Carris 208, Carris 210, CarrisMetropolitana 2730, CarrisMetropolitana 4701, CarrisMetropolitana 4708, CarrisMetropolitana 4715"
 "110639",4.73147882611605,"Carris 202, CarrisMetropolitana 3706"
 "110654",7.52526299430321,"Carris 206, Carris 736, Carris 207, Carris 208"
@@ -17,16 +17,16 @@ Dicofre,services,lines
 "110659",9.73027843640262,"Carris 202, Carris 203, CarrisMetropolitana 1740, CarrisMetropolitana 3706, CarrisMetropolitana 3708"
 "110660",9.76092841649445,"Carris 201, Carris 203, CarrisMetropolitana 3706, CarrisMetropolitana 3708"
 "110661",17.9388341453949,"Carris 206, Carris 201, Carris 202, Carris 207, Carris 208, Carris 210, CarrisMetropolitana 3708"
-"110662",16.3335152717968,"Carris 208, Carris 210, CarrisMetropolitana 2730, CarrisMetropolitana 4701, CarrisMetropolitana 4708, CarrisMetropolitana 4715, CP R"
-"110663",11.5839538889249,"Carris 206, Carris 203, Carris 208, Carris 210, CP R"
+"110662",15.3332374168371,"Carris 208, Carris 210, CarrisMetropolitana 2730, CarrisMetropolitana 4701, CarrisMetropolitana 4708, CarrisMetropolitana 4715"
+"110663",10.5836760339652,"Carris 206, Carris 203, Carris 208, Carris 210"
 "110664",10.9298446941642,"Carris 206, Carris 207, CarrisMetropolitana 2736, CarrisMetropolitana 2769, CarrisMetropolitana 2776, CarrisMetropolitana 2812"
 "110665",14.2105896635848,"Carris 206, Carris 736, Carris 202, Carris 207, Carris 208, Carris 210"
 "110666",7.3142812001155,"Carris 736, Carris 202, Carris 207, CarrisMetropolitana 1740"
-"110667",6.27104360446098,"Carris 206, Carris 210, CP R"
+"110667",5.27076574950127,"Carris 206, Carris 210"
 "110707",3.00027785495971,"CarrisMetropolitana 2776, CarrisMetropolitana 2821"
-"110726",15.0206049873329,"Carris 208, Carris 210, CarrisMetropolitana 2730, CarrisMetropolitana 4701, CarrisMetropolitana 4708, CarrisMetropolitana 4715, CP R"
-"110727",13.707694702869,"Carris 210, CarrisMetropolitana 2730, CarrisMetropolitana 4701, CarrisMetropolitana 4708, CarrisMetropolitana 4715, CP R"
-"110728",5.00027785495971,"CarrisMetropolitana 2730, CP R"
+"110726",14.0203271323732,"Carris 208, Carris 210, CarrisMetropolitana 2730, CarrisMetropolitana 4701, CarrisMetropolitana 4708, CarrisMetropolitana 4715"
+"110727",12.7074168479093,"Carris 210, CarrisMetropolitana 2730, CarrisMetropolitana 4701, CarrisMetropolitana 4708, CarrisMetropolitana 4715"
+"110728",4,CarrisMetropolitana 2730
 "110730",7.00027785495971,"CarrisMetropolitana 2736, CarrisMetropolitana 2769, CarrisMetropolitana 2776, CarrisMetropolitana 2821"
 "110731",4.64705882352941,"Carris 207, CarrisMetropolitana 2736"
 "111002",2.00055570991942,"CarrisMetropolitana 1741, CarrisMetropolitana 1717"
@@ -38,11 +38,6 @@ Dicofre,services,lines
 "111124",1.00027785495971,CarrisMetropolitana 1740
 "111125",2.00055570991942,"CarrisMetropolitana 1740, CarrisMetropolitana 1717"
 "111126",2.00055570991942,"CarrisMetropolitana 1740, CarrisMetropolitana 1717"
-"111409",1.00027785495971,CP R
-"111412",1.00027785495971,CP R
-"111413",1.00027785495971,CP R
-"111414",1.00027785495971,CP R
-"111415",1.00027785495971,CP R
 "111512",2.00055570991942,"CarrisMetropolitana 1740, CarrisMetropolitana 1741"
 "111513",1.00027785495971,CarrisMetropolitana 1740
 "111514",6.66777808650551,"Carris 202, CarrisMetropolitana 1706, CarrisMetropolitana 1709"
@@ -54,7 +49,7 @@ Dicofre,services,lines
 "111609",10.5655717412696,"Carris 206, Carris 736, CarrisMetropolitana 2769, CarrisMetropolitana 2776, CarrisMetropolitana 2812, CarrisMetropolitana 2821"
 "111610",4.00055570991942,"CarrisMetropolitana 2812, CarrisMetropolitana 1709"
 "150201",6.00166712975827,"CarrisMetropolitana 4701, CarrisMetropolitana 4708, CarrisMetropolitana 4715"
-"150202",12.0033342595165,"CarrisMetropolitana 4701, CarrisMetropolitana 4708, CarrisMetropolitana 4715"
+"150202",6.00166712975827,"CarrisMetropolitana 4701, CarrisMetropolitana 4708, CarrisMetropolitana 4715"
 "150203",6.00166712975827,"CarrisMetropolitana 4701, CarrisMetropolitana 4708, CarrisMetropolitana 4715"
 "150303",2.06185567010309,CarrisMetropolitana 3708
 "150312",4.12666782955248,"CarrisMetropolitana 3706, CarrisMetropolitana 3708"
@@ -74,78 +69,3 @@ Dicofre,services,lines
 "150803",2.00055570991942,CarrisMetropolitana 4715
 "151205",2.00055570991942,CarrisMetropolitana 4715
 "151210",2.00055570991942,CarrisMetropolitana 4715
-"110601","5.000277854959711","Carris 203, CarrisMetropolitana 1740"
-"110602","11.79361235117885","Carris 201, Carris 203, CarrisMetropolitana 1740, CarrisMetropolitana 3706, CarrisMetropolitana 3708"
-"110607","8.331848142038572","Carris 203, Carris 208, Carris 210, CP R"
-"110608","7.668055941465222","Carris 202, CarrisMetropolitana 1740, CarrisMetropolitana 1741, CarrisMetropolitana 1717, CarrisMetropolitana 1706"
-"110610","10.73203453603547","Carris 202, Carris 203, CarrisMetropolitana 1740, CarrisMetropolitana 1741, CarrisMetropolitana 3706"
-"110611","6.667222376586089","Carris 202, CarrisMetropolitana 2821, CarrisMetropolitana 1709"
-"110618","13.21263056479903","Carris 206, Carris 736, Carris 207, CarrisMetropolitana 2736, CarrisMetropolitana 2769, CarrisMetropolitana 2776, CarrisMetropolitana 2812"
-"110621","6.331848142038572","Carris 208, Carris 210, CP R"
-"110633","15.33323741683713","Carris 208, Carris 210, CarrisMetropolitana 2730, CarrisMetropolitana 4701, CarrisMetropolitana 4708, CarrisMetropolitana 4715"
-"110639","4.731478826116049","Carris 202, CarrisMetropolitana 3706"
-"110654","7.525262994303214","Carris 206, Carris 736, Carris 207, Carris 208"
-"110655","7.190836600277986","Carris 206, Carris 203, Carris 208"
-"110656","10.51436601204269","Carris 206, Carris 203, Carris 207, Carris 208"
-"110657","10.68029846813324","Carris 736, Carris 203, Carris 207, CarrisMetropolitana 1740, CarrisMetropolitana 1741, CarrisMetropolitana 3706"
-"110658","8.667222376586089","Carris 201, Carris 203, CarrisMetropolitana 1740, CarrisMetropolitana 1741"
-"110659","9.730278436402616","Carris 202, Carris 203, CarrisMetropolitana 1740, CarrisMetropolitana 3706, CarrisMetropolitana 3708"
-"110660","9.760928416494451","Carris 201, Carris 203, CarrisMetropolitana 3706, CarrisMetropolitana 3708"
-"110661","17.93883414539489","Carris 206, Carris 201, Carris 202, Carris 207, Carris 208, Carris 210, CarrisMetropolitana 3708"
-"110662","16.33351527179684","Carris 208, Carris 210, CarrisMetropolitana 2730, CarrisMetropolitana 4701, CarrisMetropolitana 4708, CarrisMetropolitana 4715, CP R"
-"110663","11.58395388892487","Carris 206, Carris 203, Carris 208, Carris 210, CP R"
-"110664","10.92984469416422","Carris 206, Carris 207, CarrisMetropolitana 2736, CarrisMetropolitana 2769, CarrisMetropolitana 2776, CarrisMetropolitana 2812"
-"110665","14.21058966358485","Carris 206, Carris 736, Carris 202, Carris 207, Carris 208, Carris 210"
-"110666","7.3142812001155","Carris 736, Carris 202, Carris 207, CarrisMetropolitana 1740"
-"110667","6.271043604460978","Carris 206, Carris 210, CP R"
-"110707","3.000277854959711","CarrisMetropolitana 2776, CarrisMetropolitana 2821"
-"110726","15.02060498733294","Carris 208, Carris 210, CarrisMetropolitana 2730, CarrisMetropolitana 4701, CarrisMetropolitana 4708, CarrisMetropolitana 4715, CP R"
-"110727","13.70769470286905","Carris 210, CarrisMetropolitana 2730, CarrisMetropolitana 4701, CarrisMetropolitana 4708, CarrisMetropolitana 4715, CP R"
-"110728","5.000277854959711","CarrisMetropolitana 2730, CP R"
-"110730","7.000277854959711","CarrisMetropolitana 2736, CarrisMetropolitana 2769, CarrisMetropolitana 2776, CarrisMetropolitana 2821"
-"110731","4.647058823529411","Carris 207, CarrisMetropolitana 2736"
-"111002","2.000555709919422","CarrisMetropolitana 1741, CarrisMetropolitana 1717"
-"111012","3.666944521626378","Carris 201, CarrisMetropolitana 1741"
-"111013","2.000555709919422","CarrisMetropolitana 1740, CarrisMetropolitana 1741"
-"111108","1.000277854959711",CarrisMetropolitana 1740
-"111115","2.000555709919422",CarrisMetropolitana 1709
-"111122","1.000277854959711",CarrisMetropolitana 1740
-"111124","1.000277854959711",CarrisMetropolitana 1740
-"111125","2.000555709919422","CarrisMetropolitana 1740, CarrisMetropolitana 1717"
-"111126","2.000555709919422","CarrisMetropolitana 1740, CarrisMetropolitana 1717"
-"111409","1.000277854959711",CP R
-"111412","1.000277854959711",CP R
-"111413","1.000277854959711",CP R
-"111414","1.000277854959711",CP R
-"111415","1.000277854959711",CP R
-"111512","2.000555709919422","CarrisMetropolitana 1740, CarrisMetropolitana 1741"
-"111513","1.000277854959711",CarrisMetropolitana 1740
-"111514","6.667778086505511","Carris 202, CarrisMetropolitana 1706, CarrisMetropolitana 1709"
-"111515","4.667222376586089","Carris 202, CarrisMetropolitana 1717, CarrisMetropolitana 1706"
-"111516","3.000833564879133","CarrisMetropolitana 1717, CarrisMetropolitana 1709"
-"111517","2.000555709919422","CarrisMetropolitana 1740, CarrisMetropolitana 1717"
-"111603","10.56557174126962","Carris 206, Carris 736, CarrisMetropolitana 2769, CarrisMetropolitana 2776, CarrisMetropolitana 2812, CarrisMetropolitana 2821"
-"111608","7.6675002315458","Carris 202, CarrisMetropolitana 2821, CarrisMetropolitana 1706, CarrisMetropolitana 1709"
-"111609","10.56557174126962","Carris 206, Carris 736, CarrisMetropolitana 2769, CarrisMetropolitana 2776, CarrisMetropolitana 2812, CarrisMetropolitana 2821"
-"111610","4.000555709919422","CarrisMetropolitana 2812, CarrisMetropolitana 1709"
-"150201","6.001667129758267","CarrisMetropolitana 4701, CarrisMetropolitana 4708, CarrisMetropolitana 4715"
-"150202","6.001667129758267","CarrisMetropolitana 4701, CarrisMetropolitana 4708, CarrisMetropolitana 4715"
-"150203","6.001667129758267","CarrisMetropolitana 4701, CarrisMetropolitana 4708, CarrisMetropolitana 4715"
-"150303","2.061855670103093",CarrisMetropolitana 3708
-"150312","4.126667829552476","CarrisMetropolitana 3706, CarrisMetropolitana 3708"
-"150313","2.061855670103093",CarrisMetropolitana 3708
-"150314","2.064812159449383",CarrisMetropolitana 3706
-"150315","3.09573999450093","CarrisMetropolitana 3706, CarrisMetropolitana 3708"
-"150407","1.000277854959711",TCB 3
-"150409","4.001111419838844","CarrisMetropolitana 4600, CarrisMetropolitana 4602, TCB 7, TCB 3"
-"150410","4.001111419838844","CarrisMetropolitana 4600, CarrisMetropolitana 4602, TCB 7, TCB 3"
-"150601","4.001111419838844","CarrisMetropolitana 4600, CarrisMetropolitana 4602, CarrisMetropolitana 4701"
-"150603","3.000833564879133","CarrisMetropolitana 4600, CarrisMetropolitana 4701"
-"150607","5.001389274798555","CarrisMetropolitana 4600, CarrisMetropolitana 4602, CarrisMetropolitana 4701, TCB 3"
-"150704","2.000555709919422",CarrisMetropolitana 4701
-"150709","2.000555709919422",CarrisMetropolitana 4701
-"150710","6.001667129758267","CarrisMetropolitana 4701, CarrisMetropolitana 4708, CarrisMetropolitana 4715"
-"150802","2.000555709919422",CarrisMetropolitana 4715
-"150803","2.000555709919422",CarrisMetropolitana 4715
-"151205","2.000555709919422",CarrisMetropolitana 4715
-"151210","2.000555709919422",CarrisMetropolitana 4715
