@@ -22,6 +22,10 @@ através dos respetivos ficheiros GTFS.
     DATES <- c("2025-04-02","2025-04-05")
     HOURS <- c(20:23, 0:8)
 
+    # HOURS <- c(0,4,8)
+    # OPERATORS <- c("TTSL")
+    # HOURS <- c(0)
+
     FOLDER_GTFS_SOURCE <-"resources"
     FOLDER_OUTPUT <- "output"
 
@@ -56,6 +60,12 @@ através dos respetivos ficheiros GTFS.
 ### Processamento
 
 #### Operação horária por operador
+
+    # Dev parameters, to avoid loop
+    # OPERATORS <- c("Carris", "CarrisMetropolitana", "MetroLisboa", "MobiCascais", "MTS", "TCB", "CP", "Fertagus", "TTSL")
+    # o = "MobiCascais"
+    # d = "2025-04-09"
+    # h = 8
 
     # Loop processing
     for (o in OPERATORS) {
@@ -180,17 +190,9 @@ através dos respetivos ficheiros GTFS.
               services = summarise_number_sum(services),
               lines=summarise_text_unique(route_short_name_plus)
             )
-          summary_table_clean <- summary_table %>%
-            st_drop_geometry() 
-          result <- PARISHES %>%
-            left_join(summary_table_clean, by = "Dicofre") %>%
-            mutate(
-              services = replace_na(services, 0)
-            )
-          folder = sprintf("%s/%s/GeoJSONParish", FOLDER_OUTPUT, d)
+          folder = sprintf("%s/%s/CSVParish", FOLDER_OUTPUT, d)
           ifelse(!dir.exists(folder), dir.create(folder, recursive=TRUE), FALSE)
-          result_reprojected <- st_transform(result, crs=4386)
-          st_write(result_reprojected,sprintf("%s/%02d00.geojson", folder, h), append = FALSE)
+          st_write(summary_table %>% st_drop_geometry(),sprintf("%s/%02d00.csv", folder, h), append = FALSE)
       }
     }
 
