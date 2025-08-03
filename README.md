@@ -9,11 +9,11 @@ Análise da oferta dos operadores de transporte público da AML com base na sua 
 
 https://lxparapessoas.github.io/rede-madrugada/
 
-> Parâmetros suportados (adicionar ao URL, depois de ?, agregados por &):<br/><br/>
-> Exemplo: https://lxparapessoas.github.io/rede-madrugada/?iframe=true&date=20250402&map=lines<br/>
+> Parâmetros suportados (adicionar ao URL, depois de ?, agregados por &):<br/>
 > - iframe=true, para esconder o formulário<br/>
 > - date=YYYYMMDD, para alterar a data dos dados<br/>
-> - map=parishes|lines, para alterar o tipo de mapa<br/
+> - map=parishes|lines, para alterar o tipo de mapa<br/><br/>
+> Exemplo: https://lxparapessoas.github.io/rede-madrugada/?iframe=true&date=20250402&map=lines
 
 ## Componentes
 
