@@ -21,6 +21,8 @@ const MAX_SERVICES_PARISH = 270;
 
 const MAP_DARK = 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png';
 const MAP_LIGHT = 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png';
+const MAP_INIT_ZOOM = 11;
+const MAP_INIT_CENTER = [38.7169, -9.1399]; // Lisbon
 
 const GRADIENT = ["#ffffe5","#f7fcc4","#e4f4ac","#c7e89b","#a2d88a","#78c578","#4eaf63","#2f944e","#15793f","#036034","#004529"]
 // From https://observablehq.com/@d3/color-schemes

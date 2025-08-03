@@ -213,7 +213,7 @@ window.onload = function () {
     const btn_play = document.getElementById("toggle-play");
 
     // Initialize map
-    var map = L.map('map', { zoomControl: false }).setView([38.719604, -9.139209], 13);
+    var map = L.map('map', { zoomControl: false }).setView(MAP_INIT_CENTER, MAP_INIT_ZOOM);
 
     toggleColor(map, btn_color, COLOR_MODE);
 
