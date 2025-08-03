@@ -68,10 +68,10 @@ Dicofre,services,lines
 "150202",11.0030564045568,"CarrisMetropolitana 4501, CarrisMetropolitana 4600, CarrisMetropolitana 4701, CarrisMetropolitana 4702, CarrisMetropolitana 4705, CarrisMetropolitana 4708, CarrisMetropolitana 4715"
 "150203",11.0030564045568,"CarrisMetropolitana 4501, CarrisMetropolitana 4600, CarrisMetropolitana 4701, CarrisMetropolitana 4702, CarrisMetropolitana 4705, CarrisMetropolitana 4708, CarrisMetropolitana 4715"
 "150303",8.00222283967769,"CarrisMetropolitana 3012, CarrisMetropolitana 3022, CarrisMetropolitana 3025, CarrisMetropolitana 3030, CarrisMetropolitana 3708, CarrisMetropolitana 3710"
-"150312",15.2627900247367,"CarrisMetropolitana 3003, CarrisMetropolitana 3012, CarrisMetropolitana 3022, CarrisMetropolitana 3025, CarrisMetropolitana 3703, CarrisMetropolitana 3706, CarrisMetropolitana 3708, CarrisMetropolitana 3710, Fertagus, TTSL"
-"150313",9.0025006946374,"CarrisMetropolitana 3012, CarrisMetropolitana 3022, CarrisMetropolitana 3025, CarrisMetropolitana 3030, CarrisMetropolitana 3708, CarrisMetropolitana 3710, Fertagus"
+"150312",24.7088842795146,"CarrisMetropolitana 3003, CarrisMetropolitana 3012, CarrisMetropolitana 3022, CarrisMetropolitana 3025, CarrisMetropolitana 3703, CarrisMetropolitana 3706, CarrisMetropolitana 3708, CarrisMetropolitana 3710, Fertagus, MTS 1, MTS 2, MTS 3, TTSL"
+"150313",11.5980306153295,"CarrisMetropolitana 3012, CarrisMetropolitana 3022, CarrisMetropolitana 3025, CarrisMetropolitana 3030, CarrisMetropolitana 3708, CarrisMetropolitana 3710, Fertagus, MTS 3"
 "150314",9.26112289497841,"CarrisMetropolitana 3012, CarrisMetropolitana 3022, CarrisMetropolitana 3025, CarrisMetropolitana 3030, CarrisMetropolitana 3706, CarrisMetropolitana 3710, Fertagus"
-"150315",7.26056718505899,"CarrisMetropolitana 3003, CarrisMetropolitana 3706, CarrisMetropolitana 3708, CarrisMetropolitana 3710, Fertagus"
+"150315",14.1111315191448,"CarrisMetropolitana 3003, CarrisMetropolitana 3706, CarrisMetropolitana 3708, CarrisMetropolitana 3710, Fertagus, MTS 1, MTS 2"
 "150407",2.75862068965517,TCB 3
 "150409",18.1316953503196,"CarrisMetropolitana 4600, CarrisMetropolitana 4602, CP Linha do Sado, TCB 1, TCB 3, TCB 7, TCB 14, TCB 15, TTSL"
 "150410",18.1316953503196,"CarrisMetropolitana 4600, CarrisMetropolitana 4602, CP Linha do Sado, TCB 1, TCB 3, TCB 7, TCB 14, TCB 15, TTSL"
@@ -86,7 +86,7 @@ Dicofre,services,lines
 "150803",4.00111141983884,"CarrisMetropolitana 4516, CarrisMetropolitana 4715, CP Linha do Sado"
 "150804",1.00027785495971,CarrisMetropolitana 4562
 "151002",4.12256753405772,"CarrisMetropolitana 3508, Fertagus"
-"151005",4.12256753405772,"CarrisMetropolitana 3508, Fertagus"
+"151005",10.9731318681435,"CarrisMetropolitana 3508, Fertagus, MTS 1, MTS 2"
 "151006",1.00027785495971,CarrisMetropolitana 3105
 "151007",8.52392351073272,"CarrisMetropolitana 3105, CarrisMetropolitana 3508, CarrisMetropolitana 3620, Fertagus, TTSL"
 "151103",1.00027785495971,CarrisMetropolitana 3620

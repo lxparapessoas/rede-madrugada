@@ -76,10 +76,10 @@ Dicofre,services,lines
 "150202",9.47189677371152,"CarrisMetropolitana 4600, CarrisMetropolitana 4701, CarrisMetropolitana 4708, CarrisMetropolitana 4715"
 "150203",10.4721746286712,"CarrisMetropolitana 4512, CarrisMetropolitana 4600, CarrisMetropolitana 4701, CarrisMetropolitana 4708, CarrisMetropolitana 4715"
 "150303",7.18917414261989,"CarrisMetropolitana 3012, CarrisMetropolitana 3022, CarrisMetropolitana 3024, CarrisMetropolitana 3708, CarrisMetropolitana 3710"
-"150312",24.9540409102579,"CarrisMetropolitana 3003, CarrisMetropolitana 3012, CarrisMetropolitana 3022, CarrisMetropolitana 3024, CarrisMetropolitana 3040, CarrisMetropolitana 3507, CarrisMetropolitana 3509, CarrisMetropolitana 3510, CarrisMetropolitana 3511, CarrisMetropolitana 3703, CarrisMetropolitana 3705, CarrisMetropolitana 3706, CarrisMetropolitana 3708, CarrisMetropolitana 3710, CarrisMetropolitana 4730, Fertagus, TTSL"
-"150313",12.1905634174184,"CarrisMetropolitana 3012, CarrisMetropolitana 3022, CarrisMetropolitana 3024, CarrisMetropolitana 3507, CarrisMetropolitana 3510, CarrisMetropolitana 3705, CarrisMetropolitana 3708, CarrisMetropolitana 3710, Fertagus"
+"150312",36.9540409102579,"CarrisMetropolitana 3003, CarrisMetropolitana 3012, CarrisMetropolitana 3022, CarrisMetropolitana 3024, CarrisMetropolitana 3040, CarrisMetropolitana 3507, CarrisMetropolitana 3509, CarrisMetropolitana 3510, CarrisMetropolitana 3511, CarrisMetropolitana 3703, CarrisMetropolitana 3705, CarrisMetropolitana 3706, CarrisMetropolitana 3708, CarrisMetropolitana 3710, CarrisMetropolitana 4730, Fertagus, MTS 1, MTS 2, MTS 3, TTSL"
+"150313",16.1905634174184,"CarrisMetropolitana 3012, CarrisMetropolitana 3022, CarrisMetropolitana 3024, CarrisMetropolitana 3507, CarrisMetropolitana 3510, CarrisMetropolitana 3705, CarrisMetropolitana 3708, CarrisMetropolitana 3710, Fertagus, MTS 3"
 "150314",13.2020206840011,"CarrisMetropolitana 3012, CarrisMetropolitana 3022, CarrisMetropolitana 3024, CarrisMetropolitana 3040, CarrisMetropolitana 3502, CarrisMetropolitana 3507, CarrisMetropolitana 3510, CarrisMetropolitana 3705, CarrisMetropolitana 3706, Fertagus"
-"150315",15.0982001009713,"CarrisMetropolitana 3003, CarrisMetropolitana 3024, CarrisMetropolitana 3040, CarrisMetropolitana 3502, CarrisMetropolitana 3509, CarrisMetropolitana 3510, CarrisMetropolitana 3511, CarrisMetropolitana 3703, CarrisMetropolitana 3706, CarrisMetropolitana 3708, CarrisMetropolitana 4730, Fertagus"
+"150315",23.0982001009713,"CarrisMetropolitana 3003, CarrisMetropolitana 3024, CarrisMetropolitana 3040, CarrisMetropolitana 3502, CarrisMetropolitana 3509, CarrisMetropolitana 3510, CarrisMetropolitana 3511, CarrisMetropolitana 3703, CarrisMetropolitana 3706, CarrisMetropolitana 3708, CarrisMetropolitana 4730, Fertagus, MTS 1, MTS 2"
 "150407",3.75130253560264,TCB 3
 "150409",17.2992131521939,"CarrisMetropolitana 4600, CarrisMetropolitana 4602, CarrisMetropolitana 4604, CP Linha do Sado, TCB 71, TCB 3, TTSL"
 "150410",17.2992131521939,"CarrisMetropolitana 4600, CarrisMetropolitana 4602, CarrisMetropolitana 4604, CP Linha do Sado, TCB 71, TCB 3, TTSL"
@@ -94,7 +94,7 @@ Dicofre,services,lines
 "150803",4.00111141983884,"CarrisMetropolitana 4512, CarrisMetropolitana 4715, CP Linha do Sado"
 "150804",1.00027785495971,CarrisMetropolitana 4562
 "151002",6.83464152609622,"CarrisMetropolitana 3502, CarrisMetropolitana 3509, CarrisMetropolitana 3536, CarrisMetropolitana 4730, Fertagus"
-"151005",10.0856314145499,"CarrisMetropolitana 3502, CarrisMetropolitana 3507, CarrisMetropolitana 3509, CarrisMetropolitana 3510, CarrisMetropolitana 3511, CarrisMetropolitana 4730, Fertagus"
+"151005",18.0856314145499,"CarrisMetropolitana 3502, CarrisMetropolitana 3507, CarrisMetropolitana 3509, CarrisMetropolitana 3510, CarrisMetropolitana 3511, CarrisMetropolitana 4730, Fertagus, MTS 1, MTS 2"
 "151006",1.00027785495971,CarrisMetropolitana 3536
 "151007",8.83519723601565,"CarrisMetropolitana 3502, CarrisMetropolitana 3509, CarrisMetropolitana 3536, CarrisMetropolitana 4730, Fertagus, TTSL"
 "151101",1.00027785495971,CarrisMetropolitana 3536
