@@ -59,7 +59,7 @@ const getShapesLayerParishesData = (layer, date, hour) => {
 
             layer.eachLayer(function (layer) {
                 const feature = layer.feature;
-                let properties = feature.properties;
+                let properties = results.data.find(row => row['Dicofre'] === feature.properties.Dicofre);
                 let operators = properties.lines ? [...new Set(properties.lines.split(",").map(l => l.replace(/[0-9]/g, '').trim()))] : [];
 
                 // Replace old tooltip (optional step)
