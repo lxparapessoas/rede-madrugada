@@ -21,7 +21,7 @@ const getShapesLayerOperator = (operator, date, hour) => {
         },
         onEachFeature: function (feature, layer) {
             let properties = feature.properties;
-            console.log(date, hour, operator, properties);
+            // console.log(date, hour, operator, properties);
             layer.bindPopup(`
                         <h6>${DB_OPERATORS[operator]['name']}</h6>
                         <dl>
@@ -35,42 +35,72 @@ const getShapesLayerOperator = (operator, date, hour) => {
     });
 }
 
-const getShapesLayerParishes = (date, hour) => {
-    return new L.GeoJSON.AJAX(`${BASE_URL}/${date}/${String(hour).padStart(2, '0')}00.geojson`, {
-        style: function (feature) {
-            let properties = feature.properties;
-            if (properties.services > maxFrequencyPa) maxFrequencyPa = properties.services;
+const getShapesLayerParishesData = (layer, date, hour) => {
+    // Load CSV data
+    // console.log("CSV Request", `${BASE_URL}/${date}/${String(hour).padStart(2, '0')}00.csv`, layer);
+    Papa.parse(`${BASE_URL}/${date}/${String(hour).padStart(2, '0')}00.csv`, {
+        download: true, header: true,
+        complete: results => {
+            layer.setStyle(function (feature) {
+                let properties = results.data.find(row => row['Dicofre'] === feature.properties.Dicofre);
 
-            // Color
-            let colorIndex = Math.min(Math.ceil(properties.services * GRADIENT.length / MAX_SERVICES_PARISH), GRADIENT.length - 1);
+                if (properties && properties.services > maxFrequencyPa) maxFrequencyPa = properties.services;
+
+                // Color
+                let colorIndex = !properties ? undefined : Math.min(Math.ceil(properties.services * GRADIENT.length / MAX_SERVICES_PARISH), GRADIENT.length - 1);
+
+                return {
+                    color: '#FFFFFF',
+                    fillColor: (!properties || properties.services === 0) ? 'rgb(0,0,0,0)' : GRADIENT[colorIndex],
+                    fill: true,
+                    fillOpacity: 1
+                };
+            });
+
+            layer.eachLayer(function (layer) {
+                const feature = layer.feature;
+                let properties = feature.properties;
+                let operators = properties.lines ? [...new Set(properties.lines.split(",").map(l => l.replace(/[0-9]/g, '').trim()))] : [];
+
+                // Replace old tooltip (optional step)
+                if (layer.getTooltip()) {
+                    layer.unbindTooltip();
+                }
+
+                layer.bindPopup(`
+                    <h6>${properties.Freguesia}</h6>
+                    <dl>
+                        <dt>Concelho<dt>
+                        <dd><b>${properties.Concelho}</b><dd>
+                        <dt>Nr circulações<dt>
+                        <dd><b>${Math.round(properties.services)}</b></dd>
+                        <dt>Operadores<dt>
+                        <dd><b>${operators && operators.length > 0 ? operators.join(', ') : "-"}</b></dd>
+                    </dl>
+                `);
+            })
+
+            // TODO! tooltip
+
+        }
+    });
+}
+
+const getShapesLayerParishes = () => {
+    return new L.GeoJSON.AJAX(`${BASE_URL}/freguesias_4326.geojson`, {
+        style: function () {
             return {
-                color: '#FFFFFF',
-                fillColor: properties.services === 0 ? 'rgb(0,0,0,0)' : GRADIENT[colorIndex],
+                color: '#363636',
                 fill: true,
-                fillOpacity: 1
+                fillColor: '#FFFFFF',
             };
-        },
-        onEachFeature: function (feature, layer) {
-            let properties = feature.properties;
-            console.log(date, hour, "Freguesia", properties);
-            let operators = properties.lines ? [...new Set(properties.lines.split(",").map(l => l.replace(/[0-9]/g, '').trim()))] : [];
-            layer.bindPopup(`
-                        <h6>${properties.Freguesia}</h6>
-                        <dl>
-                            <dt>Concelho<dt>
-                            <dd><b>${properties.Concelho}</b><dd>
-                            <dt>Nr circulações<dt>
-                            <dd><b>${Math.round(properties.services)}</b></dd>
-                            <dt>Operadores<dt>
-                            <dd><b>${operators && operators.length>0 ? operators.join(', ') : "-"}</b></dd>
-                        </dl>
-                    `);
         },
     });
 }
 
+
 const getShapesLayerMunicipalities = () => {
-    return new L.GeoJSON.AJAX(`${BASE_URL}/municipios.geojson`, {
+    return new L.GeoJSON.AJAX(`${BASE_URL}/municipios_4326.geojson`, {
         style: function () {
             return {
                 color: '#363636',
@@ -83,14 +113,14 @@ const getShapesLayerMunicipalities = () => {
 
 
 const formChange = (map, mapType, date, hourIndex, operators, detailedMode) => {
-    console.log("form change", date, hourIndex, operators);
+    // console.log("form change", date, hourIndex, operators);
     let hour = DB_HOURS[hourIndex];
 
     hour_text = document.getElementById("hour-text");
     hour_text.innerHTML = String(hour).padStart(2, '0');
 
     if (map && date && hour !== undefined && operators) {
-        if (detailedMode && mapType!==undefined && mapType!=="lines") {
+        if (detailedMode && mapType !== undefined && mapType !== "lines") {
             document.getElementById("operators").classList.add("hidden");
         } else if (detailedMode) {
             document.getElementById("operators").classList.remove("hidden");
@@ -111,21 +141,29 @@ const formChange = (map, mapType, date, hourIndex, operators, detailedMode) => {
                 geojsonLayer[op].addTo(map);
             })
         } else {
-            Object.keys(geojsonLayer).forEach(key => {if (key!=="MUN") geojsonLayer[key].remove()});
+            Object.keys(geojsonLayer).forEach(key => { if (key !== "MUN" && key !== "PAR") geojsonLayer[key].remove() });
 
-            geojsonLayer[date] = getShapesLayerParishes(date, hour);
-            geojsonLayer[date].addTo(map);
-            geojsonLayer[date].bringToBack();
-            geojsonLayer[date].on('data:loaded', function() {
-                geojsonLayer[date].bringToBack();
-            }) 
             if (!geojsonLayer['MUN'] || !geojsonLayer['MUN']._map) {
-                geojsonLayer['MUN'] = getShapesLayerMunicipalities(date, hour);
+                geojsonLayer['MUN'] = getShapesLayerMunicipalities();
                 geojsonLayer['MUN'].addTo(map);
                 geojsonLayer['MUN'].bringToFront();
-                geojsonLayer['MUN'].on('data:loaded', function() {
-                    geojsonLayer[date + 'MUN'].bringToFront();
-                }) 
+                geojsonLayer['MUN'].on('data:loaded', function () {
+                    geojsonLayer['MUN'].bringToFront();
+                })
+            }
+
+            if (!geojsonLayer['PAR'] || !geojsonLayer['PAR']._map) {
+                // If parishes not drawn yet, draw them
+                geojsonLayer['PAR'] = getShapesLayerParishes();
+                geojsonLayer['PAR'].addTo(map);
+                geojsonLayer['PAR'].bringToFront();
+                geojsonLayer['PAR'].on('data:loaded', function () {
+                    // geojsonLayer['PAR'].bringToFront();
+                    geojsonLayer['MUN'].bringToFront();
+                    getShapesLayerParishesData(geojsonLayer['PAR'], date, hour);
+                })
+            } else {
+                getShapesLayerParishesData(geojsonLayer['PAR'], date, hour);
             }
         }
     }
@@ -136,7 +174,7 @@ const toggleDetails = (btn_detail, detailed, mapType) => {
 
     Array.from(elements).forEach(e => {
         if (detailed) {
-            if (mapType==="lines" || e.id!=="operators") e.classList.remove("hidden");
+            if (mapType === "lines" || e.id !== "operators") e.classList.remove("hidden");
         }
         else e.classList.add("hidden");
     })
@@ -193,7 +231,7 @@ window.onload = function () {
     Object.keys(DB_OPERATORS).map(operator => {
         let properties = DB_OPERATORS[operator];
         operators_form_html += `
-                    <label htmlFor="${operator}"><input type="checkbox" value="${operator}" name="operator-checkbox" checked />${properties.name}</label>
+                <label htmlFor = "${operator}" > <input type="checkbox" value="${operator}" name="operator-checkbox" checked />${properties.name}</label >
                 `
     })
     operator_fieldset.innerHTML = operators_form_html;
@@ -203,7 +241,7 @@ window.onload = function () {
     Object.keys(DB_DATES).map((day, i) => {
         let label = DB_DATES[day];
         dates_form_html += `
-                    <label htmlFor="${day}"><input type="radio" value="${day}" name="date-checkbox" ${DATE == day ? 'checked' : ''} />${label}</label>
+                <label htmlFor = "${day}" > <input type="radio" value="${day}" name="date-checkbox" ${DATE == day ? 'checked' : ''} />${label}</label >
                 `
     })
     dates_fieldset.innerHTML = dates_form_html;
@@ -247,11 +285,10 @@ window.onload = function () {
 
     map_checkbox.forEach(checkbox => {
         // Initialize with map being displayed (can be changed through URL param)
-        if (checkbox.value===MAP_TYPE) {checkbox.checked=true;}
-        else {checkbox.checked=false;}
+        if (checkbox.value === MAP_TYPE) { checkbox.checked = true; }
+        else { checkbox.checked = false; }
 
         checkbox.onchange = (e) => {
-            console.log("map_checkbox", e.target.value)
             if (e.target.checked) { // true, add to operators
                 MAP_TYPE = e.target.value;
                 formChange(map, MAP_TYPE, DATE, HOUR, OPERATORS, DETAILED_MODE);
@@ -269,18 +306,18 @@ window.onload = function () {
         localStorage.setItem("detailed-mode", DETAILED_MODE);
         toggleDetails(btn_detail, DETAILED_MODE, MAP_TYPE);
     }
-    
+
     btn_play.onclick = () => {
         if (PLAY) {
             clearInterval(PLAY);
             PLAY = undefined;
-            hour_slider.disabled=false;
+            hour_slider.disabled = false;
             btn_play.innerHTML = "▶️";
         } else {
             btn_play.innerHTML = "⏹️";
-            hour_slider.disabled=true;
+            hour_slider.disabled = true;
             PLAY = setInterval(() => {
-                HOUR = HOUR+1>=DB_HOURS.length ? 0 : HOUR+1;
+                HOUR = HOUR + 1 >= DB_HOURS.length ? 0 : HOUR + 1;
                 hour_slider.value = HOUR;
                 formChange(map, MAP_TYPE, DATE, HOUR, OPERATORS, DETAILED_MODE);
             }, 3000)
