@@ -60,7 +60,7 @@ const getShapesLayerParishesData = (layer, date, hour) => {
             layer.eachLayer(function (layer) {
                 const feature = layer.feature;
                 let properties = results.data.find(row => row['Dicofre'] === feature.properties.Dicofre);
-                let operators = properties.lines ? [...new Set(properties.lines.split(",").map(l => l.replace(/[0-9]/g, '').trim()))] : [];
+                let operators = properties && properties.lines ? [...new Set(properties.lines.split(",").map(l => l.replace(/[0-9]/g, '').trim()))] : [];
 
                 // Replace old tooltip (optional step)
                 if (layer.getTooltip()) {
@@ -73,7 +73,7 @@ const getShapesLayerParishesData = (layer, date, hour) => {
                         <dt>Concelho<dt>
                         <dd><b>${feature.properties.Concelho}</b><dd>
                         <dt>Nr circulações<dt>
-                        <dd><b>${Math.round(properties.services)}</b></dd>
+                        <dd><b>${properties && properties.services ? Math.round(properties.services) : 0}</b></dd>
                         <dt>Operadores<dt>
                         <dd><b>${operators && operators.length > 0 ? operators.join(', ') : "-"}</b></dd>
                     </dl>
