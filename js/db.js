@@ -16,7 +16,9 @@ const DB_DATES = {
     20250402: "Dias úteis (abril)",
     20250405: "Sábados (abril)",
     20250806: "Dias úteis (agosto)",
-    20250809: "Sábados (agosto)"
+    20250809: "Sábados (agosto)",
+    20250917: "Dias úteis (setembro)",
+    20250920: "Sábados (setembro)"
 }
 const MAX_SERVICES_LINE = 15;
 const MAX_SERVICES_PARISH = 270;
