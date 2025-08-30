@@ -91,6 +91,7 @@ const getShapesLayerParishes = () => {
         style: function () {
             return {
                 color: '#363636',
+                weight: 1,
                 fill: true,
                 fillColor: '#FFFFFF',
             };
@@ -104,6 +105,7 @@ const getShapesLayerMunicipalities = () => {
         style: function () {
             return {
                 color: '#363636',
+                weight: 2,
                 fill: false
             };
         },
