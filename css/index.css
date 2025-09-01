@@ -18,13 +18,14 @@ dl {
 }
 
 dl dd {
-    text-align: right;
+    margin-left: 0;
+    margin-bottom: 6px;
 }
 
 #logo {
     position: absolute;
-    top: 5%;
-    right: 2.5%;
+    bottom: 5%;
+    left: 2.5%;
     width: 100px;
     z-index: 10001;
 }
@@ -57,6 +58,7 @@ dl dd {
 fieldset, button  {font-size: .8rem!important;}
 h6  {font-size: .9rem!important;}
 h3  {font-size: 1.1rem!important;}
+.small{font-size: .85rem;}
 
 @media only screen and (max-width: 992px) {
     #controls-panel {
@@ -68,9 +70,9 @@ h3  {font-size: 1.1rem!important;}
         margin-right: 50px!important;
     }
     #logo {
-        right: 5%;
-        top: 3.5%;
-        width: 50px;
+        left: 5%;
+        bottom: 3.5%;
+        width: 80px;
     }
     #controls-panel img {
         width: 15%;
@@ -83,6 +85,9 @@ h3  {font-size: 1.1rem!important;}
         left: 2.5%;
         top: 1%;
         max-height: 90vh;
+    }
+    #logo {
+        width: 50px;
     }
 }
 
@@ -133,16 +138,22 @@ div[role="group"] {
 }
 
 /** LPP Colors **/
-[type="checkbox"]:checked,
-[type="checkbox"]:checked:active,
-[type="checkbox"]:checked:focus,
 [type="radio"]:checked,
 [type="radio"]:checked:active,
 [type="radio"]:checked:focus {
     accent-color: #00ffac;
     background-color: #00ffac;
-    border-color: #363636;
-    color: #363636;
+    border-color: #003322;
+    color: #003322;
+}
+
+[type="checkbox"]:checked,
+[type="checkbox"]:checked:active,
+[type="checkbox"]:checked:focus {
+    accent-color: #003322;
+    background-color: #003322;
+    border-color: #003322;
+    color: #003322;
 }
 
 [type="range"]:active::-moz-range-thumb, [type="range"]:focus-within::-moz-range-thumb,
@@ -151,6 +162,6 @@ div[role="group"] {
 }
 
 /** Iframe **/
-.iframe > #controls-panel > .container-fluid:not(:first-of-type) {
-    display: none;
+.iframe > #controls-panel > .container-fluid:not(.show-iframe) {
+    display: none!important;
 }

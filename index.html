@@ -18,25 +18,26 @@
 <body class="iframe">
 
     <div id="logo">
-        <img src="./static/lpp.png" width="100%" style="margin-right: 8px;" />
+        <img src="./static/logo.svg" width="100%" style="margin-right: 8px;" />
     </div>
 
     <div id="controls-panel" class="overflow-auto">
-        <div class="container-fluid" style="display: flex; align-items: center;">
-            <h3 style="margin: 0; color: #363636; text-align: left;">Os transportes na AML</h3>
+        <div class="container-fluid" style="text-align: left;">
+            <h3 style="margin: 0; margin-bottom: 0.5rem; color: #363636; text-align: left;">Que transportes temos à noite?</h3>
+            <p class="small">Neste mapa interactivo, podes explorar os transportes que existem na tua zona ao longo da noite. Os dados são de Setembro de 2025.</p>
         </div>
-        <div id="slider" class="container-fluid">
+        <div id="slider" class="container-fluid show-iframe">
             <label class="" style="margin-top: 16px; margin-right: 8px; flex-grow: 1;">
-                <h6 style="margin: 0;"><span id="hour-text"></span>:00 horas</h6>
+                <h6 style="margin: 0;"><span id="hour-text"></span>:00</h6>
                 <input id="hour-slider" type="range" />
             </label>
             <button class="secondary outline" id="toggle-play"></button>
         </div>
         <div class="container-fluid details">
-            <h6 style="text-align: left;">Mapa</h6>
+            <h6 style="text-align: left;">Vista</h6>
             <fieldset id="map-fieldset">
-                <label htmlFor="parishes"><input type="radio" value="parishes" name="map-checkbox"/>Freguesias</label>
-                <label htmlFor="lines"><input type="radio" value="lines" name="map-checkbox" checked="checked"/>Linhas de transporte público</label>
+                <label htmlFor="parishes"><input type="radio" value="parishes" name="map-checkbox"/>Por freguesia</label>
+                <label htmlFor="lines"><input type="radio" value="lines" name="map-checkbox" checked="checked"/>Por linha</label>
             </fieldset>
         </div>
         <div class="container-fluid details">
@@ -55,6 +56,7 @@
 
     <div id="map"></div>
 
+    <script src="https://kit.fontawesome.com/17e93d90c5.js" crossorigin="anonymous"></script>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
         integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 

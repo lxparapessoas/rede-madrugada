@@ -25,9 +25,9 @@ const getShapesLayerOperator = (operator, date, hour) => {
             layer.bindPopup(`
                         <h6>${DB_OPERATORS[operator]['name']}</h6>
                         <dl>
-                            <dt>Linha(s)<dt>
+                            <dt>Linhas<dt>
                             <dd><b>${properties.route_short_name_unique}</b><dd>
-                            <dt>Nr circulações<dt>
+                            <dt>Circulações<dt>
                             <dd><b>${Math.round(properties.services_sum)}</b></dd>
                         </dl>
                     `);
@@ -51,7 +51,7 @@ const getShapesLayerParishesData = (layer, date, hour) => {
 
                 return {
                     color: '#FFFFFF',
-                    fillColor: (!properties || properties.services === 0) ? 'rgb(0,0,0,0)' : GRADIENT[colorIndex],
+                    fillColor: (!properties || properties.services === 0) ? '#EDEDEDBF' : GRADIENT[colorIndex],
                     fill: true,
                     fillOpacity: 1
                 };
@@ -72,9 +72,9 @@ const getShapesLayerParishesData = (layer, date, hour) => {
                     <dl>
                         <dt>Concelho<dt>
                         <dd><b>${feature.properties.Concelho}</b><dd>
-                        <dt>Nr circulações<dt>
+                        <dt>Circulações<dt>
                         <dd><b>${properties && properties.services ? Math.round(properties.services) : 0}</b></dd>
-                        <dt>Operadores<dt>
+                        <dt>Serviços<dt>
                         <dd><b>${operators && operators.length > 0 ? operators.join(', ') : "-"}</b></dd>
                     </dl>
                 `);
@@ -105,7 +105,7 @@ const getShapesLayerMunicipalities = () => {
         style: function () {
             return {
                 color: '#363636',
-                weight: 2,
+                weight: 1,
                 fill: false
             };
         },
@@ -181,15 +181,17 @@ const toggleDetails = (btn_detail, detailed, mapType) => {
         else e.classList.add("hidden");
     })
 
-    btn_detail.innerHTML = detailed ? "🔹Ver mapa" : "📑 Editar parâmetros";
+    btn_detail.innerHTML = detailed ? "<i class='fa-solid fa-map'></i> Ver mapa" : "<i class='fa-solid fa-sliders'></i> Editar parâmetros";
     localStorage.setItem("detailed-mode", detailed);
 }
 
 const toggleColor = (map, btn_color, mode) => {
     L.tileLayer(mode === "dark" ? MAP_DARK : MAP_LIGHT).addTo(map);
-    btn_color.innerHTML = mode === "dark" ? "☀️ Modo claro" : "🌑 Modo escuro";
+    btn_color.innerHTML = mode === "dark" ? "<i class='fa-solid fa-circle-half-stroke'></i> Modo claro" : "<i class='fa-solid fa-circle-half-stroke'></i> Modo escuro";
+    document.querySelector("#logo img").src = mode === "dark" ? "./static/logo-b.svg" : "./static/logo.svg";
     localStorage.setItem("color-mode", mode);
 }
+
 
 window.onload = function () {
 
@@ -202,7 +204,7 @@ window.onload = function () {
     let OPERATORS = Object.keys(DB_OPERATORS);
     let DATE = urlParams.get('date') && Object.keys(DB_DATES).includes(urlParams.get('date')) ? urlParams.get('date') : Object.keys(DB_DATES)[0];
     let COLOR_MODE = localStorage.getItem("color-mode") ? localStorage.getItem("color-mode") : "dark";
-    let DETAILED_MODE = localStorage.getItem("detailed-mode") ? localStorage.getItem("detailed-mode") === "true" : true;
+    let DETAILED_MODE = localStorage.getItem("detailed-mode") ? localStorage.getItem("detailed-mode") === "true" : false;
     let MAP_TYPE = urlParams.get('map') ? urlParams.get('map') : "parishes"; // Options: parishes, lines
     let PLAY = undefined;
 
@@ -309,23 +311,27 @@ window.onload = function () {
         toggleDetails(btn_detail, DETAILED_MODE, MAP_TYPE);
     }
 
+    const tick = () => {
+        HOUR = HOUR + 1 >= DB_HOURS.length ? 0 : HOUR + 1;
+        hour_slider.value = HOUR;
+        formChange(map, MAP_TYPE, DATE, HOUR, OPERATORS, DETAILED_MODE);
+    }
     btn_play.onclick = () => {
         if (PLAY) {
             clearInterval(PLAY);
             PLAY = undefined;
             hour_slider.disabled = false;
-            btn_play.innerHTML = "▶️";
+            btn_play.innerHTML = "<i class='fa-solid fa-play'></i>";
         } else {
-            btn_play.innerHTML = "⏹️";
+            btn_play.innerHTML = "<i class='fa-solid fa-pause'></i>";
             hour_slider.disabled = true;
+            tick();
             PLAY = setInterval(() => {
-                HOUR = HOUR + 1 >= DB_HOURS.length ? 0 : HOUR + 1;
-                hour_slider.value = HOUR;
-                formChange(map, MAP_TYPE, DATE, HOUR, OPERATORS, DETAILED_MODE);
-            }, 3000)
+                tick();
+            }, MAP_TYPE == "parishes" ? 1500 : 3000)
         }
     }
-    btn_play.innerHTML = "▶️";
+    btn_play.innerHTML = "<i class='fa-solid fa-play'></i>";
 
     // Initialize form 
     formChange(map, MAP_TYPE, DATE, HOUR, OPERATORS, DETAILED_MODE);
