@@ -14,7 +14,8 @@ const DB_OPERATORS = {
 const DB_HOURS = [20, 21, 22, 23, 0, 1, 2, 3, 4, 5, 6, 7, 8];
 const DB_DATES = {
     20250917: "Dias úteis",
-    20250920: "Sábados"
+    20250920: "Sábados",
+    20250921: "Domingos"
 }
 const MAX_SERVICES_LINE = 15;
 const MAX_SERVICES_PARISH = 270;
