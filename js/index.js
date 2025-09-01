@@ -105,7 +105,7 @@ const getShapesLayerMunicipalities = () => {
         style: function () {
             return {
                 color: '#363636',
-                weight: 2,
+                weight: 1,
                 fill: false
             };
         },
