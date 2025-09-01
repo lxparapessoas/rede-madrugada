@@ -23,8 +23,8 @@ const DB_DATES = {
 const MAX_SERVICES_LINE = 15;
 const MAX_SERVICES_PARISH = 270;
 
-const MAP_DARK = 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png';
-const MAP_LIGHT = 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png';
+const MAP_DARK = 'https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png';
+const MAP_LIGHT = 'https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png';
 const MAP_INIT_ZOOM = 11;
 const MAP_INIT_CENTER = [38.7169, -9.1399]; // Lisbon
 
