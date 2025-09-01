@@ -192,6 +192,7 @@ const toggleColor = (map, btn_color, mode) => {
     localStorage.setItem("color-mode", mode);
 }
 
+
 window.onload = function () {
 
     // Get URL params
@@ -310,6 +311,11 @@ window.onload = function () {
         toggleDetails(btn_detail, DETAILED_MODE, MAP_TYPE);
     }
 
+    const tick = () => {
+        HOUR = HOUR + 1 >= DB_HOURS.length ? 0 : HOUR + 1;
+        hour_slider.value = HOUR;
+        formChange(map, MAP_TYPE, DATE, HOUR, OPERATORS, DETAILED_MODE);
+    }
     btn_play.onclick = () => {
         if (PLAY) {
             clearInterval(PLAY);
@@ -319,11 +325,10 @@ window.onload = function () {
         } else {
             btn_play.innerHTML = "⏹️";
             hour_slider.disabled = true;
+            tick();
             PLAY = setInterval(() => {
-                HOUR = HOUR + 1 >= DB_HOURS.length ? 0 : HOUR + 1;
-                hour_slider.value = HOUR;
-                formChange(map, MAP_TYPE, DATE, HOUR, OPERATORS, DETAILED_MODE);
-            }, 3000)
+                tick();
+            }, MAP_TYPE == "parishes" ? 1500 : 3000)
         }
     }
     btn_play.innerHTML = "▶️";
