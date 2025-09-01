@@ -136,16 +136,22 @@ div[role="group"] {
 }
 
 /** LPP Colors **/
-[type="checkbox"]:checked,
-[type="checkbox"]:checked:active,
-[type="checkbox"]:checked:focus,
 [type="radio"]:checked,
 [type="radio"]:checked:active,
 [type="radio"]:checked:focus {
     accent-color: #00ffac;
     background-color: #00ffac;
-    border-color: #363636;
-    color: #363636;
+    border-color: #003322;
+    color: #003322;
+}
+
+[type="checkbox"]:checked,
+[type="checkbox"]:checked:active,
+[type="checkbox"]:checked:focus {
+    accent-color: #003322;
+    background-color: #003322;
+    border-color: #003322;
+    color: #003322;
 }
 
 [type="range"]:active::-moz-range-thumb, [type="range"]:focus-within::-moz-range-thumb,
