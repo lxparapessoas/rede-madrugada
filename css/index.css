@@ -18,7 +18,8 @@ dl {
 }
 
 dl dd {
-    text-align: right;
+    margin-left: 0;
+    margin-bottom: 6px;
 }
 
 #logo {

@@ -25,9 +25,9 @@ const getShapesLayerOperator = (operator, date, hour) => {
             layer.bindPopup(`
                         <h6>${DB_OPERATORS[operator]['name']}</h6>
                         <dl>
-                            <dt>Linha(s)<dt>
+                            <dt>Linhas<dt>
                             <dd><b>${properties.route_short_name_unique}</b><dd>
-                            <dt>Nr circulações<dt>
+                            <dt>Circulações<dt>
                             <dd><b>${Math.round(properties.services_sum)}</b></dd>
                         </dl>
                     `);
@@ -72,9 +72,9 @@ const getShapesLayerParishesData = (layer, date, hour) => {
                     <dl>
                         <dt>Concelho<dt>
                         <dd><b>${feature.properties.Concelho}</b><dd>
-                        <dt>Nr circulações<dt>
+                        <dt>Circulações<dt>
                         <dd><b>${properties && properties.services ? Math.round(properties.services) : 0}</b></dd>
-                        <dt>Operadores<dt>
+                        <dt>Serviços<dt>
                         <dd><b>${operators && operators.length > 0 ? operators.join(', ') : "-"}</b></dd>
                     </dl>
                 `);
