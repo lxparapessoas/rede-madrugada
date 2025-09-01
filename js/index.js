@@ -202,7 +202,7 @@ window.onload = function () {
     let OPERATORS = Object.keys(DB_OPERATORS);
     let DATE = urlParams.get('date') && Object.keys(DB_DATES).includes(urlParams.get('date')) ? urlParams.get('date') : Object.keys(DB_DATES)[0];
     let COLOR_MODE = localStorage.getItem("color-mode") ? localStorage.getItem("color-mode") : "dark";
-    let DETAILED_MODE = localStorage.getItem("detailed-mode") ? localStorage.getItem("detailed-mode") === "true" : true;
+    let DETAILED_MODE = localStorage.getItem("detailed-mode") ? localStorage.getItem("detailed-mode") === "true" : false;
     let MAP_TYPE = urlParams.get('map') ? urlParams.get('map') : "parishes"; // Options: parishes, lines
     let PLAY = undefined;
 
