@@ -181,13 +181,13 @@ const toggleDetails = (btn_detail, detailed, mapType) => {
         else e.classList.add("hidden");
     })
 
-    btn_detail.innerHTML = detailed ? "🔹Ver mapa" : "📑 Editar parâmetros";
+    btn_detail.innerHTML = detailed ? "<i class='fa-solid fa-map'></i> Ver mapa" : "<i class='fa-solid fa-sliders'></i> Editar parâmetros";
     localStorage.setItem("detailed-mode", detailed);
 }
 
 const toggleColor = (map, btn_color, mode) => {
     L.tileLayer(mode === "dark" ? MAP_DARK : MAP_LIGHT).addTo(map);
-    btn_color.innerHTML = mode === "dark" ? "☀️ Modo claro" : "🌑 Modo escuro";
+    btn_color.innerHTML = mode === "dark" ? "<i class='fa-solid fa-circle-half-stroke'></i> Modo claro" : "<i class='fa-solid fa-circle-half-stroke'></i> Modo escuro";
     document.querySelector("#logo img").src = mode === "dark" ? "./static/logo-b.svg" : "./static/logo.svg";
     localStorage.setItem("color-mode", mode);
 }
@@ -321,9 +321,9 @@ window.onload = function () {
             clearInterval(PLAY);
             PLAY = undefined;
             hour_slider.disabled = false;
-            btn_play.innerHTML = "▶️";
+            btn_play.innerHTML = "<i class='fa-solid fa-play'></i>";
         } else {
-            btn_play.innerHTML = "⏹️";
+            btn_play.innerHTML = "<i class='fa-solid fa-pause'></i>";
             hour_slider.disabled = true;
             tick();
             PLAY = setInterval(() => {
@@ -331,7 +331,7 @@ window.onload = function () {
             }, MAP_TYPE == "parishes" ? 1500 : 3000)
         }
     }
-    btn_play.innerHTML = "▶️";
+    btn_play.innerHTML = "<i class='fa-solid fa-play'></i>";
 
     // Initialize form 
     formChange(map, MAP_TYPE, DATE, HOUR, OPERATORS, DETAILED_MODE);
