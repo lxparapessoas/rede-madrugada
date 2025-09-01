@@ -57,6 +57,7 @@ dl dd {
 fieldset, button  {font-size: .8rem!important;}
 h6  {font-size: .9rem!important;}
 h3  {font-size: 1.1rem!important;}
+.small{font-size: .85rem;}
 
 @media only screen and (max-width: 992px) {
     #controls-panel {
