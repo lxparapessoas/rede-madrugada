@@ -1,12 +1,12 @@
 // Global attributes
 const BASE_URL = "http://127.0.0.1:8000/geojson";
 const DB_OPERATORS = {
-    Carris: { color: '#003f8f', name: 'Carris Municipal' },
-    CarrisMetropolitana: { color: '#ffdd01', name: 'Carris Metropolitana' },
-    MetroLisboa: { color: "#EF5A34", name: "Metro Lisboa" },
+    Carris: { color: '#003f8f', name: 'Carris' },
+    CarrisMetropolitana: { color: '#ffdd01', name: 'Carris Met' },
+    MetroLisboa: { color: "#EF5A34", name: "Metro" },
     MobiCascais: { color: "#31bcad", name: "MobiCascais" },
-    MTS: { color: "#218FCE", name: "Metro Sul" },
-    TCB: { color: "#95CB4E", name: "TCBarreiro" },
+    MTS: { color: "#218FCE", name: "MTS" },
+    TCB: { color: "#95CB4E", name: "TCB" },
     CP: { color: "#74B751", name: "CP" },
     Fertagus: { color: "#C74F4F", name: "Fertagus" },
     TTSL: { color: "#EC6724", name: "TTSL" },

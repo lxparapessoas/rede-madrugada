@@ -160,6 +160,6 @@ div[role="group"] {
 }
 
 /** Iframe **/
-.iframe > #controls-panel > .container-fluid:not(:first-of-type) {
-    display: none;
+.iframe > #controls-panel > .container-fluid:not(.show-iframe) {
+    display: none!important;
 }

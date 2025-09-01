@@ -22,21 +22,21 @@
     </div>
 
     <div id="controls-panel" class="overflow-auto">
-        <div class="container-fluid" style="display: flex; align-items: center;">
-            <h3 style="margin: 0; color: #363636; text-align: left;">Os transportes na AML</h3>
+        <div class="container-fluid details" style="display: flex; align-items: center;">
+            <h3 style="margin: 0; color: #363636; text-align: left;">Que transportes temos à noite?</h3>
         </div>
-        <div id="slider" class="container-fluid">
+        <div id="slider" class="container-fluid show-iframe">
             <label class="" style="margin-top: 16px; margin-right: 8px; flex-grow: 1;">
-                <h6 style="margin: 0;"><span id="hour-text"></span>:00 horas</h6>
+                <h6 style="margin: 0;"><span id="hour-text"></span>:00</h6>
                 <input id="hour-slider" type="range" />
             </label>
             <button class="secondary outline" id="toggle-play"></button>
         </div>
         <div class="container-fluid details">
-            <h6 style="text-align: left;">Mapa</h6>
+            <h6 style="text-align: left;">Vista</h6>
             <fieldset id="map-fieldset">
-                <label htmlFor="parishes"><input type="radio" value="parishes" name="map-checkbox"/>Freguesias</label>
-                <label htmlFor="lines"><input type="radio" value="lines" name="map-checkbox" checked="checked"/>Linhas de transporte público</label>
+                <label htmlFor="parishes"><input type="radio" value="parishes" name="map-checkbox"/>Por freguesia</label>
+                <label htmlFor="lines"><input type="radio" value="lines" name="map-checkbox" checked="checked"/>Por linha</label>
             </fieldset>
         </div>
         <div class="container-fluid details">
