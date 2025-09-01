@@ -28,7 +28,9 @@ const MAP_LIGHT = 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.pn
 const MAP_INIT_ZOOM = 11;
 const MAP_INIT_CENTER = [38.7169, -9.1399]; // Lisbon
 
-const GRADIENT = ["#ffffe5","#f7fcc4","#e4f4ac","#c7e89b","#a2d88a","#78c578","#4eaf63","#2f944e","#15793f","#036034","#004529"]
+let GRADIENT = ["#ffffe5","#f7fcc4","#e4f4ac","#c7e89b","#a2d88a","#78c578","#4eaf63","#2f944e","#15793f","#036034","#004529"]
+// Append transparency 0.75
+GRADIENT = GRADIENT.map(g => g + "BF")
 // From https://observablehq.com/@d3/color-schemes
 // ["#e8f6e3","#d3eecd","#b7e2b1","#97d494","#73c378","#4daf62","#2f984f","#157f3b","#036429","#00441b"];
 
