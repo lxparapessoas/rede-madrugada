@@ -51,7 +51,7 @@ const getShapesLayerParishesData = (layer, date, hour) => {
 
                 return {
                     color: '#FFFFFF',
-                    fillColor: (!properties || properties.services === 0) ? 'rgb(0,0,0,0)' : GRADIENT[colorIndex],
+                    fillColor: (!properties || properties.services === 0) ? '#EDEDEDBF' : GRADIENT[colorIndex],
                     fill: true,
                     fillOpacity: 1
                 };
