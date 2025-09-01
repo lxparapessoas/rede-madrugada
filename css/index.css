@@ -23,8 +23,8 @@ dl dd {
 
 #logo {
     position: absolute;
-    top: 5%;
-    right: 2.5%;
+    bottom: 5%;
+    left: 2.5%;
     width: 100px;
     z-index: 10001;
 }
@@ -68,9 +68,9 @@ h3  {font-size: 1.1rem!important;}
         margin-right: 50px!important;
     }
     #logo {
-        right: 5%;
-        top: 3.5%;
-        width: 50px;
+        left: 5%;
+        bottom: 3.5%;
+        width: 80px;
     }
     #controls-panel img {
         width: 15%;
@@ -83,6 +83,9 @@ h3  {font-size: 1.1rem!important;}
         left: 2.5%;
         top: 1%;
         max-height: 90vh;
+    }
+    #logo {
+        width: 50px;
     }
 }
 

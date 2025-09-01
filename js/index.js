@@ -188,6 +188,7 @@ const toggleDetails = (btn_detail, detailed, mapType) => {
 const toggleColor = (map, btn_color, mode) => {
     L.tileLayer(mode === "dark" ? MAP_DARK : MAP_LIGHT).addTo(map);
     btn_color.innerHTML = mode === "dark" ? "☀️ Modo claro" : "🌑 Modo escuro";
+    document.querySelector("#logo img").src = mode === "dark" ? "./static/logo-b.svg" : "./static/logo.svg";
     localStorage.setItem("color-mode", mode);
 }
 
