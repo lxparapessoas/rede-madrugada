@@ -13,6 +13,8 @@ https://lxparapessoas.github.io/rede-madrugada/
 > - iframe=true, para esconder o formulário<br/>
 > - date=YYYYMMDD, para alterar a data dos dados<br/>
 > - map=parishes|lines, para alterar o tipo de mapa<br/><br/>
+> - play=true, para reproduzir linha temporal automaticamente<br/><br/>
+> - color-mode=light|dark, para alterar a cor do mapa<br/><br/>
 > Exemplo: https://lxparapessoas.github.io/rede-madrugada/?iframe=true&date=20250402&map=lines
 
 ## Componentes
