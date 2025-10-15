@@ -332,6 +332,10 @@ window.onload = function () {
         }
     }
     btn_play.innerHTML = "<i class='fa-solid fa-play'></i>";
+    // If play url param, trigger click on btn_play
+    if (urlParams.get('play') !== null) {
+        btn_play.click();
+    }
 
     // Initialize form 
     formChange(map, MAP_TYPE, DATE, HOUR, OPERATORS, DETAILED_MODE);
