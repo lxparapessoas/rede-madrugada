@@ -1,0 +1,100 @@
+---
+format: revealjs
+bibliography: references.bib
+execute: 
+  eval: false
+  echo: true
+---
+
+# Dawn transit network analysis {background-iframe="https://lxparapessoas.github.io/rede-madrugada/?iframe=true&map=parishes&play=true&color-mode=light&center=38.652343,-9.486546" auto-animate=true} 
+
+🌆🌃🌇 
+
+By Gonçalo Matos, for Lisboa Para Pessoas
+
+
+## 💡 Motivation {.smaller autp-animate=true}
+
+::: {.incremental}
+- **Night-time public transport is common** in European cities [@plyushteva_does_2020]
+
+- It can have positive impacts on **road safety** [@lichtman_sadot_can_2019] and contribute to **local economy** [@transport_for_london_night_2015]
+
+- Lisbon has them, but with **low frequency and poor connections to the outskirts**, despite 81% of the Metro Area inhabitants living outside the city [@ine_populacao_2021]
+
+- Mobility dynamic at night is **not limited to Lisbon** [@ine_mobilidade_2018]
+:::
+
+:::{.fragment}
+![Night displacement density (19:00-04:00) by destination municipality [@ine_mobilidade_2018]](figures/aml_night_density.png){width="65%"}
+:::
+
+::: {.notes}
+26 of 28 capitals had night services it in 2019
+
+Carris night connections (7) only connect to to Oeiras, Amadora, Loures and Odivelas
+
+Metro shuts down at 1am, trains and boats at 2am (Seixal, Montijo and Trafaria before that)
+:::
+
+## 💡 Motivation {.smaller autp-animate=true}
+
+::: {.incremental}
+- Problem acknowledged by experts, that state a **"mismatch with people's needs and economic activities"** [@tml_relatorio_2024]
+
+- Carris Metropolitana **night network launch has been a success**, with increases in demand up to 117% [@carris_metropolitana_desde_2025]
+:::
+
+:::{.fragment .center}
+![](https://backoffice.carrismetropolitana.pt/wp-content/uploads/2025/03/Banner.png){width="50%"}
+:::
+
+# 🌃 <u>What</u> transport options exist at dawn and <u>where</u> do they reach? 🌇 
+
+## Operators' GTFS collection {.smaller} 
+
+| Mode | Area | Operator | URL | 
+|---|------|-----------|---|
+| 🚆 | Metro Area | CP | [📂](https://publico.cp.pt/gtfs/gtfs.zip){target="_blank"} | 
+| 🚆 | Metro Area | Fertagus | [📂](https://www.fertagus.pt/GTFSZip/Fertagus_GTFS.zip){target="_blank"} |
+| 🚍 | Metro Area | Carris Metropolitana | [📂](https://api.carrismetropolitana.pt/gtfs){target="_blank"} |
+| ️⛴️ | Metro Area | TTSL | [📂](https://api.transtejo.pt/files/GTFS.zip){target="_blank"} |
+| 🚇 | Lisbon, Odivelas, Amadora | Metro | [📂](https://www.metrolisboa.pt/google_transit/googleTransit.zip){target="_blank"} |
+| 🚊 | Almada, Seixal | MTS | [📂](https://mts.pt/imt/MTS-20240129.zip){target="_blank"} |
+| 🚍 | Lisbon | Carris | [📂](https://gateway.carris.pt/gateway/gtfs/api/v2.8/GTFS){target="_blank"} |
+| 🚍 | Cascais | MobiCascais | [📂](https://drive.google.com/u/0/uc?id=13ucYiAJRtu-gXsLa02qKJrGOgDjbnUWX&export=download){target="_blank"} |
+| 🚍 | Barreiro | TCB | [📂](https://www.tcbarreiro.pt/front/files/sample_gtfs/GTFS-TCB_24.zip?68960872ed168){target="_blank"} |
+
+
+# 🤿 Let's dive into the code!
+
+[https://github.com/lxparapessoas/rede-madrugada](https://github.com/lxparapessoas/rede-madrugada){target="_blank"}
+
+# 👀 Check the results
+
+[https://lxparapessoas.github.io/rede-madrugada/](https://lxparapessoas.github.io/rede-madrugada/){target="_blank"}
+
+# A simpler way to do it {background-iframe="https://ushift.rosafelix.bike/shiny/ciclovias/" auto-animate=true} 
+
+Check [shiny.posit.co](https://shiny.posit.co/){target="_blank"}
+
+
+# Thanks! 🙂 {.smaller}
+
+
+<br/>
+
+**Let's keep in touch!**
+
+✉️ goncaloafmatos@tecnico.ulisboa.pt
+
+📞 +351 927 395 705
+
+🌐 [gmatos.pt](https://gmatos.pt){target="_blank"}
+
+![](/figures/url.png){style="position: absolute; right: 0; bottom: 0; width: 10vw; height: auto;"}
+
+# 📑 References {.smaller}
+
+::: {#refs}
+:::
