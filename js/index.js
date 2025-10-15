@@ -207,6 +207,8 @@ window.onload = function () {
     let DETAILED_MODE = localStorage.getItem("detailed-mode") ? localStorage.getItem("detailed-mode") === "true" : false;
     let MAP_TYPE = urlParams.get('map') ? urlParams.get('map') : "parishes"; // Options: parishes, lines
     let PLAY = undefined;
+    let MAP_CENTER = urlParams.get('center') ? urlParams.get('center').split(",").map(c => parseFloat(c)) : MAP_INIT_CENTER;
+    let MAP_ZOOM = urlParams.get('zoom') ? parseInt(urlParams.get('zoom')) : MAP_INIT_ZOOM;
 
     // DOM elements
     const hour_slider = document.getElementById("hour-slider");
@@ -217,7 +219,7 @@ window.onload = function () {
     const btn_play = document.getElementById("toggle-play");
 
     // Initialize map
-    var map = L.map('map', { zoomControl: false }).setView(MAP_INIT_CENTER, MAP_INIT_ZOOM);
+    var map = L.map('map', { zoomControl: false }).setView(MAP_CENTER, MAP_ZOOM);
 
     toggleColor(map, btn_color, COLOR_MODE);
 
