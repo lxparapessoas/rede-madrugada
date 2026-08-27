@@ -186,7 +186,12 @@ const toggleDetails = (btn_detail, detailed, mapType) => {
 }
 
 const toggleColor = (map, btn_color, mode) => {
-    L.tileLayer(mode === "dark" ? MAP_DARK : MAP_LIGHT).addTo(map);
+    const tileUrl = mode === "dark" ? MAP_DARK : MAP_LIGHT;
+    L.tileLayer(tileUrl, {
+        attribution: tileUrl.includes("arcgisonline") ? 'Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ'
+            : tileUrl.includes("stadiamaps") ? '&copy; <a href="https://www.stadiamaps.com/" target="_blank">Stadia Maps</a> &copy; <a href="https://openmaptiles.org/" target="_blank">OpenMapTiles</a> &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                : undefined
+    }).addTo(map);
     btn_color.innerHTML = mode === "dark" ? "<i class='fa-solid fa-circle-half-stroke'></i> Modo claro" : "<i class='fa-solid fa-circle-half-stroke'></i> Modo escuro";
     document.querySelector("#logo img").src = mode === "dark" ? "./static/logo-b.svg" : "./static/logo.svg";
     localStorage.setItem("color-mode", mode);
