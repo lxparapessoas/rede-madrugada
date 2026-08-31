@@ -196,7 +196,8 @@ const toggleColor = (map, btn_color, mode) => {
     }
 
     currentTileLayer = L.maplibreGL({
-        style: tileUrl
+        style: tileUrl,
+        attribution: MAP_ATTRIBUTION,
     }).addTo(map);
 
     if (currentTileLayer.getContainer()) {

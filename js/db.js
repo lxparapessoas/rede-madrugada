@@ -24,6 +24,7 @@ const MAP_DARK = 'https://tiles.openfreemap.org/styles/dark';
 const MAP_LIGHT = 'https://tiles.openfreemap.org/styles/positron';
 const MAP_LIGHT_OPACITY = 0.5;
 const MAP_DARK_OPACITY = 0.9;
+const MAP_ATTRIBUTION = '&copy; <a href="https://openfreemap.org" target="_blank">OpenFreeMap</a> &copy; <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a> contributors';
 const MAP_INIT_ZOOM = 11;
 const MAP_INIT_CENTER = [38.7169, -9.1399]; // Lisbon
 
