@@ -20,8 +20,10 @@ const DB_DATES = {
 const MAX_SERVICES_LINE = 15;
 const MAX_SERVICES_PARISH = 270;
 
-const MAP_DARK = 'https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png';
-const MAP_LIGHT = 'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}';
+const MAP_DARK = 'https://tiles.openfreemap.org/styles/dark';
+const MAP_LIGHT = 'https://tiles.openfreemap.org/styles/positron';
+const MAP_LIGHT_OPACITY = 0.5;
+const MAP_DARK_OPACITY = 0.9;
 const MAP_INIT_ZOOM = 11;
 const MAP_INIT_CENTER = [38.7169, -9.1399]; // Lisbon
 
